@@ -1,0 +1,63 @@
+
+[
+  {
+    "scientific_name": "Araucaria angustifolia",
+    "popular_name_pt": "Pinheiro-do-paraná",
+    "occurrence_biomes": ["Mata Atlântica", "Pampa"],
+    "endemism_status": "Nativa"
+  },
+  {
+    "scientific_name": "Euterpe edulis",
+    "popular_name_pt": "Palmito-juçara",
+    "occurrence_biomes": ["Mata Atlântica"],
+    "endemism_status": "Nativa"
+  },
+  {
+    "scientific_name": "Musa 'Prata'",
+    "popular_name_pt": "Bananeira-prata",
+    "occurrence_biomes": [],
+    "endemism_status": "Exótica"
+  },
+  {
+    "scientific_name": "Caryocar brasiliense",
+    "popular_name_pt": "Pequi",
+    "occurrence_biomes": ["Cerrado", "Caatinga"],
+    "endemism_status": "Nativa"
+  },
+  {
+    "scientific_name": "Anacardium occidentale",
+    "popular_name_pt": "Cajueiro",
+    "occurrence_biomes": ["Cerrado", "Caatinga", "Amazônia"],
+    "endemism_status": "Nativa"
+  },
+  {
+    "scientific_name": "Theobroma cacao",
+    "popular_name_pt": "Cacau",
+    "occurrence_biomes": ["Amazônia", "Mata Atlântica"],
+    "endemism_status": "Nativa"
+  },
+  {
+    "scientific_name": "Manihot esculenta",
+    "popular_name_pt": "Mandioca",
+    "occurrence_biomes": [],
+    "endemism_status": "Exótica"
+  },
+  {
+    "scientific_name": "Coffea arabica",
+    "popular_name_pt": "Café-arábica",
+    "occurrence_biomes": [],
+    "endemism_status": "Exótica"
+  },
+  {
+    "scientific_name": "Ilex paraguariensis",
+    "popular_name_pt": "Erva-mate",
+    "occurrence_biomes": ["Mata Atlântica", "Pampa"],
+    "endemism_status": "Nativa"
+  },
+  {
+    "scientific_name": "Syagrus romanzoffiana",
+    "popular_name_pt": "Jerivá",
+    "occurrence_biomes": ["Mata Atlântica", "Cerrado", "Pampa"],
+    "endemism_status": "Nativa"
+  }
+]

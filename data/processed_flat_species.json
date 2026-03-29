@@ -1,0 +1,492 @@
+[
+  {
+    "name": "Araucaria angustifolia",
+    "is_native": true,
+    "location": {
+      "lat": -27.953,
+      "lng": -50.209
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Euterpe edulis",
+    "is_native": true,
+    "location": {
+      "lat": -23.55,
+      "lng": -46.633
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Musa 'Prata'",
+    "is_native": false,
+    "location": {
+      "lat": -27.596,
+      "lng": -48.549
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Caryocar brasiliense",
+    "is_native": true,
+    "location": {
+      "lat": -15.794,
+      "lng": -47.882
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Anacardium occidentale",
+    "is_native": true,
+    "location": {
+      "lat": -5.089,
+      "lng": -42.801
+    },
+    "biome": "Caatinga",
+    "climate_zone": "Semiárido"
+  },
+  {
+    "name": "Bertholletia excelsa",
+    "is_native": true,
+    "location": {
+      "lat": -3.465,
+      "lng": -62.215
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Theobroma cacao",
+    "is_native": true,
+    "location": {
+      "lat": -4.417,
+      "lng": -63.15
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Manihot esculenta",
+    "is_native": false,
+    "location": {
+      "lat": -16.686,
+      "lng": -49.264
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Coffea arabica",
+    "is_native": false,
+    "location": {
+      "lat": -8.761,
+      "lng": -63.903
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Ilex paraguariensis",
+    "is_native": true,
+    "location": {
+      "lat": -25.428,
+      "lng": -49.273
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Eugenia uniflora",
+    "is_native": true,
+    "location": {
+      "lat": -22.906,
+      "lng": -43.172
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Psidium guajava",
+    "is_native": true,
+    "location": {
+      "lat": -12.971,
+      "lng": -38.501
+    },
+    "biome": "Caatinga",
+    "climate_zone": "Semiárido"
+  },
+  {
+    "name": "Hymenaea courbaril",
+    "is_native": true,
+    "location": {
+      "lat": -15.826,
+      "lng": -47.921
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Anadenanthera colubrina",
+    "is_native": true,
+    "location": {
+      "lat": -17.933,
+      "lng": -43.366
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Hevea brasiliensis",
+    "is_native": true,
+    "location": {
+      "lat": -3.119,
+      "lng": -60.021
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Bactris gasipaes",
+    "is_native": true,
+    "location": {
+      "lat": -0.952,
+      "lng": -60.923
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Paullinia cupana",
+    "is_native": true,
+    "location": {
+      "lat": -3.16,
+      "lng": -59.98
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Ziziphus joazeiro",
+    "is_native": true,
+    "location": {
+      "lat": -9.418,
+      "lng": -40.501
+    },
+    "biome": "Caatinga",
+    "climate_zone": "Semiárido"
+  },
+  {
+    "name": "Amburana cearensis",
+    "is_native": true,
+    "location": {
+      "lat": -6.089,
+      "lng": -38.406
+    },
+    "biome": "Caatinga",
+    "climate_zone": "Semiárido"
+  },
+  {
+    "name": "Myracrodruon urundeuva",
+    "is_native": true,
+    "location": {
+      "lat": -8.532,
+      "lng": -37.251
+    },
+    "biome": "Caatinga",
+    "climate_zone": "Semiárido"
+  },
+  {
+    "name": "Caesalpinia pyramidalis",
+    "is_native": true,
+    "location": {
+      "lat": -9.665,
+      "lng": -35.735
+    },
+    "biome": "Caatinga",
+    "climate_zone": "Semiárido"
+  },
+  {
+    "name": "Butia odorata",
+    "is_native": true,
+    "location": {
+      "lat": -32.035,
+      "lng": -52.098
+    },
+    "biome": "Pampa",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Eryngium horridum",
+    "is_native": true,
+    "location": {
+      "lat": -30.034,
+      "lng": -51.229
+    },
+    "biome": "Pampa",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Schinus terebinthifolius",
+    "is_native": true,
+    "location": {
+      "lat": -31.771,
+      "lng": -52.338
+    },
+    "biome": "Pampa",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Victoria amazonica",
+    "is_native": true,
+    "location": {
+      "lat": -19.016,
+      "lng": -57.658
+    },
+    "biome": "Pantanal",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Copernicia alba",
+    "is_native": true,
+    "location": {
+      "lat": -20.267,
+      "lng": -56.923
+    },
+    "biome": "Pantanal",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Byrsonima cydoniifolia",
+    "is_native": true,
+    "location": {
+      "lat": -17.581,
+      "lng": -55.85
+    },
+    "biome": "Pantanal",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Syagrus romanzoffiana",
+    "is_native": true,
+    "location": {
+      "lat": -26.919,
+      "lng": -49.066
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Cedrela fissilis",
+    "is_native": true,
+    "location": {
+      "lat": -24.184,
+      "lng": -48.423
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Tabebuia heptaphylla",
+    "is_native": true,
+    "location": {
+      "lat": -21.228,
+      "lng": -44.994
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Dipteryx alata",
+    "is_native": true,
+    "location": {
+      "lat": -18.918,
+      "lng": -48.277
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Annona crassiflora",
+    "is_native": true,
+    "location": {
+      "lat": -16.711,
+      "lng": -49.244
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Hancornia speciosa",
+    "is_native": true,
+    "location": {
+      "lat": -14.235,
+      "lng": -51.925
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Mauritia flexuosa",
+    "is_native": true,
+    "location": {
+      "lat": -2.193,
+      "lng": -54.945
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Oenocarpus bacaba",
+    "is_native": true,
+    "location": {
+      "lat": -1.455,
+      "lng": -48.49
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Carapa guianensis",
+    "is_native": true,
+    "location": {
+      "lat": -0.5,
+      "lng": -51.5
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Spondias tuberosa",
+    "is_native": true,
+    "location": {
+      "lat": -7.228,
+      "lng": -39.314
+    },
+    "biome": "Caatinga",
+    "climate_zone": "Semiárido"
+  },
+  {
+    "name": "Passiflora edulis",
+    "is_native": true,
+    "location": {
+      "lat": -22.483,
+      "lng": -45.559
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Zea mays",
+    "is_native": false,
+    "location": {
+      "lat": -23.5,
+      "lng": -46.6
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Phaseolus vulgaris",
+    "is_native": false,
+    "location": {
+      "lat": -19.924,
+      "lng": -43.935
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Jacaranda mimosifolia",
+    "is_native": true,
+    "location": {
+      "lat": -22.22,
+      "lng": -49.945
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Handroanthus impetiginosus",
+    "is_native": true,
+    "location": {
+      "lat": -12,
+      "lng": -45
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Pterogyne nitens",
+    "is_native": true,
+    "location": {
+      "lat": -21.177,
+      "lng": -47.81
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Genipa americana",
+    "is_native": true,
+    "location": {
+      "lat": -10.911,
+      "lng": -37.071
+    },
+    "biome": "Caatinga",
+    "climate_zone": "Semiárido"
+  },
+  {
+    "name": "Talisia esculenta",
+    "is_native": true,
+    "location": {
+      "lat": -15.598,
+      "lng": -56.094
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  },
+  {
+    "name": "Myrciaria cauliflora",
+    "is_native": true,
+    "location": {
+      "lat": -23.223,
+      "lng": -45.883
+    },
+    "biome": "Mata Atlântica",
+    "climate_zone": "Subtropical Úmido"
+  },
+  {
+    "name": "Rollinia mucosa",
+    "is_native": true,
+    "location": {
+      "lat": -2.531,
+      "lng": -59.395
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Inga edulis",
+    "is_native": true,
+    "location": {
+      "lat": -9.016,
+      "lng": -65.022
+    },
+    "biome": "Amazônia",
+    "climate_zone": "Equatorial"
+  },
+  {
+    "name": "Senna spectabilis",
+    "is_native": true,
+    "location": {
+      "lat": -19.5,
+      "lng": -42.6
+    },
+    "biome": "Cerrado",
+    "climate_zone": "Tropical"
+  }
+]

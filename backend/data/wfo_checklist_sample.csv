@@ -1,0 +1,353 @@
+
+[
+  {
+    "taxonID": 1,
+    "scientificName_WFO": "Araucaria angustifolia",
+    "countryCode": "BR",
+    "decimalLatitude": -27.953,
+    "decimalLongitude": -50.209
+  },
+  {
+    "taxonID": 2,
+    "scientificName_WFO": "Euterpe edulis",
+    "countryCode": "BR",
+    "decimalLatitude": -23.55,
+    "decimalLongitude": -46.633
+  },
+  {
+    "taxonID": 3,
+    "scientificName_WFO": "Musa 'Prata'",
+    "countryCode": "BR",
+    "decimalLatitude": -27.596,
+    "decimalLongitude": -48.549
+  },
+  {
+    "taxonID": 4,
+    "scientificName_WFO": "Caryocar brasiliense",
+    "countryCode": "BR",
+    "decimalLatitude": -15.794,
+    "decimalLongitude": -47.882
+  },
+  {
+    "taxonID": 5,
+    "scientificName_WFO": "Anacardium occidentale",
+    "countryCode": "BR",
+    "decimalLatitude": -5.089,
+    "decimalLongitude": -42.801
+  },
+  {
+    "taxonID": 6,
+    "scientificName_WFO": "Bertholletia excelsa",
+    "countryCode": "BR",
+    "decimalLatitude": -3.465,
+    "decimalLongitude": -62.215
+  },
+  {
+    "taxonID": 7,
+    "scientificName_WFO": "Theobroma cacao",
+    "countryCode": "BR",
+    "decimalLatitude": -4.417,
+    "decimalLongitude": -63.15
+  },
+  {
+    "taxonID": 8,
+    "scientificName_WFO": "Solanum lycopersicum",
+    "countryCode": "US",
+    "decimalLatitude": 36.778,
+    "decimalLongitude": -119.417
+  },
+  {
+    "taxonID": 9,
+    "scientificName_WFO": "Manihot esculenta",
+    "countryCode": "BR",
+    "decimalLatitude": -16.686,
+    "decimalLongitude": -49.264
+  },
+  {
+    "taxonID": 10,
+    "scientificName_WFO": "Coffea arabica",
+    "countryCode": "BR",
+    "decimalLatitude": -8.761,
+    "decimalLongitude": -63.903
+  },
+  {
+    "taxonID": 11,
+    "scientificName_WFO": "Ilex paraguariensis",
+    "countryCode": "BR",
+    "decimalLatitude": -25.428,
+    "decimalLongitude": -49.273
+  },
+  {
+    "taxonID": 12,
+    "scientificName_WFO": "Eugenia uniflora",
+    "countryCode": "BR",
+    "decimalLatitude": -22.906,
+    "decimalLongitude": -43.172
+  },
+  {
+    "taxonID": 13,
+    "scientificName_WFO": "Psidium guajava",
+    "countryCode": "BR",
+    "decimalLatitude": -12.971,
+    "decimalLongitude": -38.501
+  },
+  {
+    "taxonID": 14,
+    "scientificName_WFO": "Hymenaea courbaril",
+    "countryCode": "BR",
+    "decimalLatitude": -15.826,
+    "decimalLongitude": -47.921
+  },
+  {
+    "taxonID": 15,
+    "scientificName_WFO": "Anadenanthera colubrina",
+    "countryCode": "BR",
+    "decimalLatitude": -17.933,
+    "decimalLongitude": -43.366
+  },
+  {
+    "taxonID": 16,
+    "scientificName_WFO": "Hevea brasiliensis",
+    "countryCode": "BR",
+    "decimalLatitude": -3.119,
+    "decimalLongitude": -60.021
+  },
+  {
+    "taxonID": 17,
+    "scientificName_WFO": "Bactris gasipaes",
+    "countryCode": "BR",
+    "decimalLatitude": -0.952,
+    "decimalLongitude": -60.923
+  },
+  {
+    "taxonID": 18,
+    "scientificName_WFO": "Paullinia cupana",
+    "countryCode": "BR",
+    "decimalLatitude": -3.16,
+    "decimalLongitude": -59.98
+  },
+  {
+    "taxonID": 19,
+    "scientificName_WFO": "Ziziphus joazeiro",
+    "countryCode": "BR",
+    "decimalLatitude": -9.418,
+    "decimalLongitude": -40.501
+  },
+  {
+    "taxonID": 20,
+    "scientificName_WFO": "Amburana cearensis",
+    "countryCode": "BR",
+    "decimalLatitude": -6.089,
+    "decimalLongitude": -38.406
+  },
+  {
+    "taxonID": 21,
+    "scientificName_WFO": "Myracrodruon urundeuva",
+    "countryCode": "BR",
+    "decimalLatitude": -8.532,
+    "decimalLongitude": -37.251
+  },
+  {
+    "taxonID": 22,
+    "scientificName_WFO": "Caesalpinia pyramidalis",
+    "countryCode": "BR",
+    "decimalLatitude": -9.665,
+    "decimalLongitude": -35.735
+  },
+  {
+    "taxonID": 23,
+    "scientificName_WFO": "Butia odorata",
+    "countryCode": "BR",
+    "decimalLatitude": -32.035,
+    "decimalLongitude": -52.098
+  },
+  {
+    "taxonID": 24,
+    "scientificName_WFO": "Eryngium horridum",
+    "countryCode": "BR",
+    "decimalLatitude": -30.034,
+    "decimalLongitude": -51.229
+  },
+  {
+    "taxonID": 25,
+    "scientificName_WFO": "Schinus terebinthifolius",
+    "countryCode": "BR",
+    "decimalLatitude": -31.771,
+    "decimalLongitude": -52.338
+  },
+  {
+    "taxonID": 26,
+    "scientificName_WFO": "Victoria amazonica",
+    "countryCode": "BR",
+    "decimalLatitude": -19.016,
+    "decimalLongitude": -57.658
+  },
+  {
+    "taxonID": 27,
+    "scientificName_WFO": "Copernicia alba",
+    "countryCode": "BR",
+    "decimalLatitude": -20.267,
+    "decimalLongitude": -56.923
+  },
+  {
+    "taxonID": 28,
+    "scientificName_WFO": "Byrsonima cydoniifolia",
+    "countryCode": "BR",
+    "decimalLatitude": -17.581,
+    "decimalLongitude": -55.85
+  },
+  {
+    "taxonID": 29,
+    "scientificName_WFO": "Syagrus romanzoffiana",
+    "countryCode": "BR",
+    "decimalLatitude": -26.919,
+    "decimalLongitude": -49.066
+  },
+  {
+    "taxonID": 30,
+    "scientificName_WFO": "Cedrela fissilis",
+    "countryCode": "BR",
+    "decimalLatitude": -24.184,
+    "decimalLongitude": -48.423
+  },
+  {
+    "taxonID": 31,
+    "scientificName_WFO": "Tabebuia heptaphylla",
+    "countryCode": "BR",
+    "decimalLatitude": -21.228,
+    "decimalLongitude": -44.994
+  },
+  {
+    "taxonID": 32,
+    "scientificName_WFO": "Dipteryx alata",
+    "countryCode": "BR",
+    "decimalLatitude": -18.918,
+    "decimalLongitude": -48.277
+  },
+  {
+    "taxonID": 33,
+    "scientificName_WFO": "Annona crassiflora",
+    "countryCode": "BR",
+    "decimalLatitude": -16.711,
+    "decimalLongitude": -49.244
+  },
+  {
+    "taxonID": 34,
+    "scientificName_WFO": "Hancornia speciosa",
+    "countryCode": "BR",
+    "decimalLatitude": -14.235,
+    "decimalLongitude": -51.925
+  },
+  {
+    "taxonID": 35,
+    "scientificName_WFO": "Mauritia flexuosa",
+    "countryCode": "BR",
+    "decimalLatitude": -2.193,
+    "decimalLongitude": -54.945
+  },
+  {
+    "taxonID": 36,
+    "scientificName_WFO": "Oenocarpus bacaba",
+    "countryCode": "BR",
+    "decimalLatitude": -1.455,
+    "decimalLongitude": -48.49
+  },
+  {
+    "taxonID": 37,
+    "scientificName_WFO": "Carapa guianensis",
+    "countryCode": "BR",
+    "decimalLatitude": -0.5,
+    "decimalLongitude": -51.5
+  },
+  {
+    "taxonID": 38,
+    "scientificName_WFO": "Spondias tuberosa",
+    "countryCode": "BR",
+    "decimalLatitude": -7.228,
+    "decimalLongitude": -39.314
+  },
+  {
+    "taxonID": 39,
+    "scientificName_WFO": "Passiflora edulis",
+    "countryCode": "BR",
+    "decimalLatitude": -22.483,
+    "decimalLongitude": -45.559
+  },
+  {
+    "taxonID": 40,
+    "scientificName_WFO": "Zea mays",
+    "countryCode": "BR",
+    "decimalLatitude": -23.5,
+    "decimalLongitude": -46.6
+  },
+  {
+    "taxonID": 41,
+    "scientificName_WFO": "Phaseolus vulgaris",
+    "countryCode": "BR",
+    "decimalLatitude": -19.924,
+    "decimalLongitude": -43.935
+  },
+  {
+    "taxonID": 42,
+    "scientificName_WFO": "Jacaranda mimosifolia",
+    "countryCode": "BR",
+    "decimalLatitude": -22.22,
+    "decimalLongitude": -49.945
+  },
+  {
+    "taxonID": 43,
+    "scientificName_WFO": "Handroanthus impetiginosus",
+    "countryCode": "BR",
+    "decimalLatitude": -12,
+    "decimalLongitude": -45
+  },
+  {
+    "taxonID": 44,
+    "scientificName_WFO": "Pterogyne nitens",
+    "countryCode": "BR",
+    "decimalLatitude": -21.177,
+    "decimalLongitude": -47.81
+  },
+  {
+    "taxonID": 45,
+    "scientificName_WFO": "Genipa americana",
+    "countryCode": "BR",
+    "decimalLatitude": -10.911,
+    "decimalLongitude": -37.071
+  },
+  {
+    "taxonID": 46,
+    "scientificName_WFO": "Talisia esculenta",
+    "countryCode": "BR",
+    "decimalLatitude": -15.598,
+    "decimalLongitude": -56.094
+  },
+  {
+    "taxonID": 47,
+    "scientificName_WFO": "Myrciaria cauliflora",
+    "countryCode": "BR",
+    "decimalLatitude": -23.223,
+    "decimalLongitude": -45.883
+  },
+  {
+    "taxonID": 48,
+    "scientificName_WFO": "Rollinia mucosa",
+    "countryCode": "BR",
+    "decimalLatitude": -2.531,
+    "decimalLongitude": -59.395
+  },
+  {
+    "taxonID": 49,
+    "scientificName_WFO": "Inga edulis",
+    "countryCode": "BR",
+    "decimalLatitude": -9.016,
+    "decimalLongitude": -65.022
+  },
+  {
+    "taxonID": 50,
+    "scientificName_WFO": "Senna spectabilis",
+    "countryCode": "BR",
+    "decimalLatitude": -19.5,
+    "decimalLongitude": -42.6
+  }
+]
