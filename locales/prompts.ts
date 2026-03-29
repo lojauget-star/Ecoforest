@@ -44,15 +44,15 @@ Use formatação Markdown para tornar a resposta clara e fácil de ler. Organize
 Com base nisso, por favor, me dê de 3 a 5 dicas práticas e específicas para que eu possa melhorar meu impacto no meio ambiente. Foque em pequenas mudanças que posso começar a fazer hoje. Obrigado!`
         },
         risk: {
-            systemInstruction: `Você é um especialista em fitopatologia e manejo integrado de pragas em sistemas agroflorestais. Sua tarefa é analisar dados climáticos locais, práticas de manejo do solo e histórico de pragas para prever janelas de vulnerabilidade e recomendar ações preventivas. Responda em Português e retorne um objeto JSON válido.`,
-            userPromptTemplate: `Analise as seguintes condições para prever riscos de pragas e doenças na próxima semana:
+            systemInstruction: `Você é um especialista em fitopatologia, manejo integrado de pragas e bem-estar animal em sistemas agroflorestais. Sua tarefa é analisar dados climáticos locais, práticas de manejo do solo e histórico de pragas para prever janelas de vulnerabilidade e recomendar ações preventivas. Responda em Português e retorne um objeto JSON válido.`,
+            userPromptTemplate: `Analise as seguintes condições para prever riscos de pragas, doenças e estresse ambiental para a próxima semana:
 
-**Manejo do Solo Atual:** {soilManagement}
+**Manejo Atual do Solo:** {soilManagement}
 **Pragas/Doenças Recentes:** {recentPests}
-**Previsão Climática (7 dias):**
+**Resumo Climático e Alertas:**
 {weatherSummary}
 
-Com base no cruzamento desses dados (ex: alta umidade + calor favorece fungos; solo exposto favorece certas pragas), identifique as janelas de vulnerabilidade (dias específicos de maior risco) e forneça recomendações de manejo preventivo (ex: aplicação de biofertilizante, poda de aeração, cobertura de solo).`
+Com base no cruzamento desses dados (ex: alta umidade + calor favorece fungos; solo exposto favorece certas pragas; alertas climáticos indicam riscos severos), identifique janelas de vulnerabilidade (dias específicos de maior risco) e forneça recomendações de manejo preventivo (ex: aplicação de biofertilizante, poda de aeração, cobertura morta, proteção para animais).`
         }
     },
     en: {
@@ -99,15 +99,15 @@ Use Markdown formatting to make the response clear and easy to read. Organize th
 Based on this, please give me 3-5 practical and specific tips so I can improve my environmental impact. Focus on small changes I can start making today. Thank you!`
         },
         risk: {
-            systemInstruction: `You are an expert in plant pathology and integrated pest management in agroforestry systems. Your task is to analyze local climate data, soil management practices, and pest history to predict vulnerability windows and recommend preventive actions. Respond in English and return a valid JSON object.`,
-            userPromptTemplate: `Analyze the following conditions to predict pest and disease risks for the upcoming week:
+            systemInstruction: `You are an expert in plant pathology, integrated pest management, and animal welfare in agroforestry systems. Your task is to analyze local climate data, soil management practices, and pest history to predict vulnerability windows and recommend preventive actions. Respond in English and return a valid JSON object.`,
+            userPromptTemplate: `Analyze the following conditions to predict pest, disease, and environmental stress risks for the upcoming week:
 
 **Current Soil Management:** {soilManagement}
 **Recent Pests/Diseases:** {recentPests}
-**Climate Forecast (7 days):**
+**Climate Summary and Alerts:**
 {weatherSummary}
 
-Based on the intersection of this data (e.g., high humidity + heat favors fungi; exposed soil favors certain pests), identify vulnerability windows (specific days of highest risk) and provide preventive management recommendations (e.g., biofertilizer application, aeration pruning, mulching).`
+Based on the intersection of this data (e.g., high humidity + heat favors fungi; exposed soil favors certain pests; climate alerts indicate severe risks), identify vulnerability windows (specific days of highest risk) and provide preventive management recommendations (e.g., biofertilizer application, aeration pruning, mulching, animal protection).`
         }
     }
 };

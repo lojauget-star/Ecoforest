@@ -237,6 +237,69 @@ export async function submitFeedback(feedback: Feedback): Promise<{ status: stri
   return { status: "success" };
 }
 
+export interface VulnerabilityAnalysisRequest {
+  climateSummary: string;
+  alerts: string;
+  lastObservation?: any;
+  cultivationData?: {
+    species: string[];
+    stage: string;
+    problems: string[];
+    description: string;
+    animals: string[];
+  };
+}
+
+export async function analyzeVulnerability(request: VulnerabilityAnalysisRequest): Promise<string> {
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    
+    let cultivationText = '';
+    if (request.cultivationData) {
+        cultivationText = `
+O QUE ESTÁ SENDO CULTIVADO E OBSERVADO:
+- Estágio do sistema: ${request.cultivationData.stage}
+- Espécies vegetais cultivadas: ${request.cultivationData.species.join(', ') || 'Nenhuma informada'}
+- Animais na produção: ${request.cultivationData.animals.join(', ') || 'Nenhum informado'}
+- Problemas observados: ${request.cultivationData.problems.join(', ') || 'Nenhum'}
+- Descrição livre do agricultor: ${request.cultivationData.description || 'Nenhuma'}
+
+Responda ESPECIFICAMENTE sobre as espécies e animais informados:
+1. Quais estão mais vulneráveis ao clima previsto?
+2. Os problemas observados têm relação com os eventos climáticos recentes?
+3. Quais ações de manejo preventivo são recomendadas para os próximos 7 dias?
+`;
+    }
+
+    const prompt = `Atue como um especialista em sistemas agroflorestais e bem-estar animal.
+Analise os dados climáticos, alertas e a última observação de bem-estar animal (se houver) para identificar vulnerabilidades do sistema, janelas de risco para pragas e doenças, e fornecer recomendações de manejo preventivo.
+
+DADOS CLIMÁTICOS:
+${request.climateSummary}
+
+ALERTAS ATIVOS:
+${request.alerts}
+
+ÚLTIMA OBSERVAÇÃO DE ANIMAIS:
+${request.lastObservation ? JSON.stringify(request.lastObservation, null, 2) : 'Nenhuma observação recente.'}
+${cultivationText}
+
+Forneça uma análise detalhada e estruturada em Markdown, focando em ações práticas para o agricultor.`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-3.1-pro-preview",
+            contents: prompt,
+            config: {
+                temperature: 0.7,
+            },
+        });
+        return response.text || '';
+    } catch (error) {
+        console.error("Gemini API Error (Vulnerability Analysis):", error);
+        throw new Error("Erro ao analisar vulnerabilidade. Por favor, tente novamente mais tarde.");
+    }
+}
+
 export async function getSustainabilityTips(answers: QuizAnswers, language: 'pt' | 'en'): Promise<string> {
     const { systemInstruction, userPromptTemplate } = prompts[language].quiz;
     const answersText = Object.entries(answers).map(([k, v]) => `${k}: ${v}`).join('\n');
@@ -253,30 +316,7 @@ export async function getSustainabilityTips(answers: QuizAnswers, language: 'pt'
 export async function getRiskPrediction(request: RiskPredictionRequest, language: 'pt' | 'en'): Promise<RiskPredictionResponse> {
     const { systemInstruction, userPromptTemplate } = prompts[language].risk;
     
-    // Fetch weather data
-    let weatherData = null;
-    try {
-        const weatherRes = await fetch(`/api/weather?lat=${request.location.lat}&lng=${request.location.lng}`);
-        if (weatherRes.ok) {
-            weatherData = await weatherRes.json();
-        }
-    } catch (e) {
-        console.error("Failed to fetch weather data:", e);
-    }
-    
-    // Format weather data for the prompt
-    let weatherSummary = "Dados climáticos não disponíveis.";
-    if (weatherData && weatherData.daily) {
-        const days = weatherData.daily.time.slice(0, 7);
-        const maxTemps = weatherData.daily.temperature_2m_max.slice(0, 7);
-        const minTemps = weatherData.daily.temperature_2m_min.slice(0, 7);
-        const precip = weatherData.daily.precipitation_sum.slice(0, 7);
-        const humidity = weatherData.daily.relative_humidity_2m_mean?.slice(0, 7) || [];
-        
-        weatherSummary = days.map((day: string, i: number) => 
-            `- ${day}: Temp ${minTemps[i]}°C a ${maxTemps[i]}°C, Chuva: ${precip[i]}mm, Umidade: ${humidity[i] || 'N/A'}%`
-        ).join('\n');
-    }
+    const weatherSummary = request.climateSummary || "Dados climáticos não disponíveis.";
 
     const userPrompt = userPromptTemplate
         .replace('{soilManagement}', request.soilManagement)

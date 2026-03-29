@@ -81,6 +81,7 @@ export interface RiskPredictionRequest {
   location: { lat: number; lng: number };
   soilManagement: string;
   recentPests: string;
+  climateSummary?: string;
 }
 
 export interface VulnerabilityWindow {
