@@ -223,7 +223,8 @@ export function buildGeminiContext(
   report: RiskReport,
   climateData: ClimateData,
   vegetalObs: VegetalObservation,
-  animalObs: AnimalObservation | null
+  animalObs: AnimalObservation | null,
+  mode: 'strict' | 'expanded' = 'strict'
 ): GeminiContext {
   const alerts = report.evidence_based_alerts;
   const hasAlerts = alerts.length > 0;
@@ -234,17 +235,30 @@ export function buildGeminiContext(
     ...new Set(alerts.map(a => a.citation)),
   ];
 
-  const prompt = `
-Você é um sistema de suporte a decisões agronômicas baseado em evidências científicas.
-Sua função é INTERPRETAR os dados abaixo e redigir uma análise em PT-BR clara e objetiva.
-
-REGRAS OBRIGATÓRIAS:
+  const strictRules = `
+REGRAS OBRIGATÓRIAS (MODO CIENTÍFICO ESTRITO):
 1. Cite explicitamente os valores medidos que embasam cada afirmação
 2. Cada recomendação de manejo deve citar o limiar científico que a justifica
 3. NÃO gere informações além do que os dados permitem concluir
 4. Se os dados forem insuficientes para uma conclusão, diga isso explicitamente
 5. Use linguagem acessível para o agricultor — evite jargão técnico desnecessário
 6. Nunca invente limiares, espécies ou condições não presentes nos dados abaixo
+`;
+
+  const expandedRules = `
+DIRETRIZES (MODO IA INTEGRADO):
+1. Você tem acesso à base científica local (abaixo), mas PODE e DEVE usar seu conhecimento amplo e pesquisar na web para complementar a análise.
+2. Identifique riscos adicionais (pragas, doenças, manejo) que não estão cobertos apenas pelos limiares climáticos básicos.
+3. Forneça recomendações práticas, holísticas e integradas (agronomia, zootecnia, agrofloresta).
+4. Use linguagem acessível para o agricultor.
+5. Deixe claro quando uma recomendação vem da base científica local e quando vem do seu conhecimento geral/pesquisa.
+`;
+
+  const prompt = `
+Você é um sistema de suporte a decisões agronômicas baseado em evidências científicas.
+Sua função é INTERPRETAR os dados abaixo e redigir uma análise em PT-BR clara e objetiva.
+
+${mode === 'strict' ? strictRules : expandedRules}
 
 ════════════════════════════════════════════════════════════
 DADOS CLIMÁTICOS MEDIDOS
@@ -338,14 +352,15 @@ Se não há dados suficientes, diga: "não é possível estabelecer relação co
 
 ## 4. RECOMENDAÇÕES DE MANEJO — PRÓXIMOS 7 DIAS
 Liste ações preventivas em ordem de prioridade.
-Cada ação deve citar o dado que a justifica.
-Formato: "Prioridade [Alta/Média/Baixa]: [Ação] — justificado por [dado medido] (Referência)"
+${mode === 'strict' 
+  ? 'Cada ação deve citar o dado que a justifica.\nFormato: "Prioridade [Alta/Média/Baixa]: [Ação] — justificado por [dado medido] (Referência)"' 
+  : 'Forneça recomendações amplas, incluindo controle de pragas, nutrição e ambiência, justificando-as com os dados climáticos ou seu conhecimento.'}
 
 ## 5. LIMITAÇÕES DESTA ANÁLISE
 O que não pode ser concluído com os dados disponíveis.
 O que o agricultor deveria monitorar para melhorar a precisão nas próximas análises.
 
-Referências utilizadas nesta análise: ${citations.join(' · ')}
+Referências utilizadas nesta análise: ${citations.length > 0 ? citations.join(' · ') : 'Nenhuma referência ativada.'}
 `;
 
   return {

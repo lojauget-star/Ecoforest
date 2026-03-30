@@ -239,18 +239,25 @@ export async function submitFeedback(feedback: Feedback): Promise<{ status: stri
 
 export interface VulnerabilityAnalysisRequest {
   prompt: string;
+  mode?: 'strict' | 'expanded';
 }
 
 export async function analyzeVulnerability(request: VulnerabilityAnalysisRequest): Promise<string> {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     
+    const config: any = {
+        temperature: request.mode === 'expanded' ? 0.9 : 0.7,
+    };
+
+    if (request.mode === 'expanded') {
+        config.tools = [{ googleSearch: {} }];
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: "gemini-3.1-pro-preview",
             contents: request.prompt,
-            config: {
-                temperature: 0.7,
-            },
+            config: config,
         });
         return response.text || '';
     } catch (error) {

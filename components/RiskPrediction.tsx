@@ -69,6 +69,7 @@ export function RiskPrediction() {
   
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [aiMode, setAiMode] = useState<'strict' | 'expanded'>('strict');
 
   const [cultivationData, setCultivationData] = useState<{
     species: string[];
@@ -265,10 +266,11 @@ export function RiskPrediction() {
         recorded_at: beaObservations[0].date
       } : null;
 
-      const context = buildGeminiContext(riskReport, climateData, vegetalObs, lastObs);
+      const context = buildGeminiContext(riskReport, climateData, vegetalObs, lastObs, aiMode);
       
       const response = await analyzeVulnerability({
-        prompt: context.prompt
+        prompt: context.prompt,
+        mode: aiMode
       });
       setAiAnalysis(response);
     } catch (err) {
@@ -935,6 +937,30 @@ export function RiskPrediction() {
                       <p className="text-emerald-800 mb-4 text-sm">
                         Nossa inteligência artificial cruza os dados climáticos, os alertas científicos e as informações do seu cultivo para gerar recomendações personalizadas.
                       </p>
+                      
+                      <div className="flex items-center justify-center gap-4 mb-6 bg-white/50 p-2 rounded-lg border border-emerald-100/50">
+                        <button
+                          onClick={() => setAiMode('strict')}
+                          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                            aiMode === 'strict' 
+                              ? 'bg-emerald-600 text-white shadow-sm' 
+                              : 'text-emerald-700 hover:bg-emerald-100/50'
+                          }`}
+                        >
+                          Modo Científico
+                        </button>
+                        <button
+                          onClick={() => setAiMode('expanded')}
+                          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                            aiMode === 'expanded' 
+                              ? 'bg-emerald-600 text-white shadow-sm' 
+                              : 'text-emerald-700 hover:bg-emerald-100/50'
+                          }`}
+                        >
+                          Modo IA Integrado
+                        </button>
+                      </div>
+
                       <button 
                         onClick={handleAnalyzeVulnerability}
                         className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2"
