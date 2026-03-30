@@ -16,6 +16,8 @@ export interface CurrentWeather {
   weather_code: number;
   weather_description: string;
   timestamp: string;
+  soil_temperature_c?: number;
+  soil_moisture_percent?: number;
 }
 
 export interface DailyForecast {
@@ -101,6 +103,8 @@ async function fetchOpenMeteo(lat: number, lng: number): Promise<{
       'wind_speed_10m',
       'uv_index',
       'weather_code',
+      'soil_temperature_6cm',
+      'soil_moisture_3_to_9cm'
     ].join(','),
     daily: [
       'temperature_2m_max',
@@ -130,6 +134,8 @@ async function fetchOpenMeteo(lat: number, lng: number): Promise<{
     weather_code: c.weather_code,
     weather_description: wmoDescription(c.weather_code),
     timestamp: c.time,
+    soil_temperature_c: c.soil_temperature_6cm,
+    soil_moisture_percent: c.soil_moisture_3_to_9cm !== undefined ? Math.round(c.soil_moisture_3_to_9cm * 100) : undefined,
   };
 
   const d = data.daily;
@@ -309,7 +315,7 @@ async function fetchOpenMeteoHistorical(
   endStr: string
 ): Promise<HistoricalSummary | null> {
   try {
-    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${startStr}&end_date=${endStr}&daily=temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_sum&timezone=auto`;
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${startStr}&end_date=${endStr}&daily=temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_sum&timezone=auto&models=era5_land`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
@@ -383,7 +389,7 @@ export async function getClimateData(lat: number, lng: number, selectedSpecies: 
   let historical: HistoricalSummary | null = null;
   
   const end = new Date();
-  end.setDate(end.getDate() - 2);
+  end.setDate(end.getDate() - 15); // Recuo de 15 dias para garantir dados do ERA5-Land
   const start = new Date(end);
   start.setFullYear(start.getFullYear() - 1);
 

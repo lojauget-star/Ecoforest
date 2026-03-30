@@ -65,6 +65,8 @@ export interface RiskReport {
     humidity_percent: number;
     precipitation_mm: number;
     uv_index: number;
+    soil_temperature_c?: number;
+    soil_moisture_percent?: number;
   };
   forecast_risks: ForecastRisk[];
   data_sources: string[];
@@ -140,9 +142,6 @@ export function generateRiskReport(
   const temp_max = nextDay?.temp_max_c ?? current.temperature_c;
   const temp_min = nextDay?.temp_min_c ?? current.temperature_c;
 
-  // Todas as espécies selecionadas (vegetais + animais)
-  const allSpecies = [...selectedSpecies, ...animalSpecies];
-
   // Avalia limiares com base nos dados medidos
   const evidenceAlerts = evaluateThresholds(
     temp_max,
@@ -150,7 +149,8 @@ export function generateRiskReport(
     current.humidity_percent,
     current.precipitation_mm,
     consecutiveDryDays,
-    allSpecies
+    selectedSpecies,
+    animalSpecies
   );
 
   // Resumo de severidade
@@ -169,7 +169,8 @@ export function generateRiskReport(
       current.humidity_percent, // umidade atual como proxy
       day.precipitation_mm,
       consecutiveDryDays,
-      allSpecies
+      selectedSpecies,
+      animalSpecies
     );
 
     return {
@@ -202,6 +203,8 @@ export function generateRiskReport(
       humidity_percent: current.humidity_percent,
       precipitation_mm: current.precipitation_mm,
       uv_index: current.uv_index,
+      soil_temperature_c: current.soil_temperature_c,
+      soil_moisture_percent: current.soil_moisture_percent,
     },
     forecast_risks: forecastRisks,
     data_sources: climateData.data_sources,
@@ -256,6 +259,8 @@ CONDIÇÃO ATUAL:
 • Umidade relativa: ${report.climate_snapshot.humidity_percent}%
 • Precipitação hoje: ${report.climate_snapshot.precipitation_mm}mm
 • Índice UV: ${report.climate_snapshot.uv_index}
+• Temp. do Solo (6cm): ${report.climate_snapshot.soil_temperature_c ?? 'N/A'}°C
+• Umidade do Solo: ${report.climate_snapshot.soil_moisture_percent ?? 'N/A'}%
 • THI calculado: ${report.thi.value} — ${report.thi.category}
   (THI = Temperature-Humidity Index, fórmula de Thom 1959,
    limiar de estresse bovino: 72 = leve, 80 = severo, 90 = crítico — West 2003)

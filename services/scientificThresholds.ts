@@ -1213,7 +1213,7 @@ export const SCIENTIFIC_THRESHOLDS: ClimateThreshold[] = [
  * getThresholdsForSpecies(species)
  * Retorna todos os limiares relevantes para uma espécie ou categoria
  */
-export function getThresholdsForSpecies(species: string): ClimateThreshold[] {
+export function getThresholdsForSpecies(species: string, category?: 'animal' | 'vegetal'): ClimateThreshold[] {
   const term = species.toLowerCase();
   
   const aliases: Record<string, string[]> = {
@@ -1227,20 +1227,25 @@ export function getThresholdsForSpecies(species: string): ClimateThreshold[] {
     'café': ['café', 'cafe', 'cafeeiro'],
   };
 
-  const matchedCategories = Object.keys(aliases).filter(category => 
-    aliases[category].some(alias => term.includes(alias))
+  const matchedCategories = Object.keys(aliases).filter(cat => 
+    aliases[cat].some(alias => term.includes(alias))
   );
 
   return SCIENTIFIC_THRESHOLDS.filter(t => {
+    // Se a categoria foi especificada e não bate com a do limiar, ignora
+    if (category && t.category !== category) return false;
+
     const tSpecies = t.species.toLowerCase();
     const tScientific = t.species_scientific?.toLowerCase() || '';
     
     if (tSpecies.includes(term) || tScientific.includes(term)) return true;
+    
+    // Limiares genéricos só são aplicados se a categoria bater
     if (tSpecies.includes('geral') || tSpecies.includes('culturas')) return true;
 
-    return matchedCategories.some(category => 
-      tSpecies.includes(category) || 
-      aliases[category].some(alias => tSpecies.includes(alias))
+    return matchedCategories.some(cat => 
+      tSpecies.includes(cat) || 
+      aliases[cat].some(alias => tSpecies.includes(alias))
     );
   });
 }
@@ -1264,17 +1269,20 @@ export function evaluateThresholds(
   humidity_percent: number,
   precipitation_mm: number,
   consecutive_dry_days: number,
-  selectedSpecies: string[]
+  selectedPlantSpecies: string[],
+  selectedAnimalSpecies: string[]
 ): EvidenceBasedAlert[] {
   const alerts: EvidenceBasedAlert[] = [];
   const thi = calculateTHI(temp_max_c, humidity_percent);
 
-  if (selectedSpecies.length === 0) {
+  if (selectedPlantSpecies.length === 0 && selectedAnimalSpecies.length === 0) {
     return [];
   }
 
-  // Coleta limiares relevantes para as espécies selecionadas
-  const relevantThresholds = selectedSpecies.flatMap(s => getThresholdsForSpecies(s));
+  // Coleta limiares relevantes para as espécies selecionadas, respeitando a categoria
+  const plantThresholds = selectedPlantSpecies.flatMap(s => getThresholdsForSpecies(s, 'vegetal'));
+  const animalThresholds = selectedAnimalSpecies.flatMap(s => getThresholdsForSpecies(s, 'animal'));
+  const relevantThresholds = [...plantThresholds, ...animalThresholds];
 
   // Remove duplicatas
   const unique = Array.from(new Map(relevantThresholds.map(t => [t.id, t])).values());

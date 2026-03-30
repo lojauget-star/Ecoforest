@@ -234,6 +234,16 @@ export function RiskPrediction() {
     setBeaForm(prev => ({ ...prev, notes: '' }));
   };
 
+  const handleDeleteObservation = (id: string) => {
+    const updatedObs = beaObservations.filter(obs => obs.id !== id);
+    setBeaObservations(updatedObs);
+    localStorage.setItem('brota_bea_observations', JSON.stringify(updatedObs));
+    
+    const savedRecords = JSON.parse(localStorage.getItem('brota_observation_records') || '[]');
+    const updatedRecords = savedRecords.filter((rec: any) => rec.id.toString() !== id);
+    localStorage.setItem('brota_observation_records', JSON.stringify(updatedRecords));
+  };
+
   const handleAnalyzeVulnerability = async () => {
     if (!climateData || !riskReport) return;
     setIsAnalyzing(true);
@@ -453,8 +463,8 @@ export function RiskPrediction() {
               Clima e Previsão
             </h2>
             
-            {/* 4 Current Condition Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Current Condition Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
               <div className="p-3 bg-orange-50 text-orange-600 rounded-full">
                 <Thermometer className="w-6 h-6" />
@@ -500,6 +510,26 @@ export function RiskPrediction() {
                 <p className={`text-xs font-medium ${getUVClassification(climateData.current.uv_index).color}`}>
                   {getUVClassification(climateData.current.uv_index).text}
                 </p>
+              </div>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+              <div className="p-3 bg-amber-50 text-amber-700 rounded-full">
+                <Thermometer className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 font-medium">Temp. do Solo (6cm)</p>
+                <p className="text-2xl font-bold text-gray-900">{climateData.current.soil_temperature_c ?? '--'}°C</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+              <div className="p-3 bg-emerald-50 text-emerald-700 rounded-full">
+                <Droplets className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 font-medium">Umidade do Solo</p>
+                <p className="text-2xl font-bold text-gray-900">{climateData.current.soil_moisture_percent ?? '--'}%</p>
               </div>
             </div>
           </div>
@@ -861,8 +891,15 @@ export function RiskPrediction() {
                     <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Últimos Registros</h4>
                     <div className="space-y-3">
                       {beaObservations.slice(0, 3).map(obs => (
-                        <div key={obs.id} className="p-3 bg-gray-50 rounded-lg border border-gray-100 text-sm">
-                          <div className="flex justify-between items-start mb-1">
+                        <div key={obs.id} className="p-3 bg-gray-50 rounded-lg border border-gray-100 text-sm relative group">
+                          <button 
+                            onClick={() => handleDeleteObservation(obs.id)}
+                            className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md opacity-0 group-hover:opacity-100 transition-all"
+                            title="Apagar registro"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <div className="flex justify-between items-start mb-1 pr-8">
                             <span className="font-semibold text-gray-900">{obs.animal.species}</span>
                             <span className="text-gray-500 text-xs">{new Date(obs.date).toLocaleDateString('pt-BR')}</span>
                           </div>
@@ -937,6 +974,50 @@ export function RiskPrediction() {
                         </ReactMarkdown>
                       </div>
                       
+                      {/* Active Alerts (Moved inside AI Analysis) */}
+                      {riskReport && riskReport.evidence_based_alerts.length > 0 && (
+                        <div className="mt-8 pt-6 border-t border-emerald-100">
+                          <h3 className="text-lg font-bold text-emerald-900 flex items-center mb-4">
+                            <AlertTriangle className="w-5 h-5 mr-2 text-amber-600" />
+                            Alertas Científicos Baseados na Sua Seleção
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {riskReport.evidence_based_alerts.map((alert, idx) => {
+                              const formatted = formatAlertForDisplay(alert);
+                              return (
+                                <div key={idx} className={`p-5 rounded-2xl border ${getAlertColor(formatted.severity)} flex flex-col gap-3 shadow-sm`}>
+                                  <div className="flex items-start gap-3">
+                                    <div className={`flex-shrink-0 mt-1 ${getAlertIconColor(formatted.severity)}`}>
+                                      {getAlertIcon(alert.threshold.stressor)}
+                                    </div>
+                                    <div>
+                                      <h3 className="text-lg font-bold capitalize leading-tight mb-1">{formatted.title}</h3>
+                                      <p className="text-sm font-medium opacity-90">{formatted.message}</p>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="mt-2 bg-white/50 rounded-xl p-3">
+                                    <span className="text-xs font-bold opacity-80 uppercase tracking-wider block mb-2">Ações Recomendadas:</span>
+                                    <ul className="list-disc list-inside text-sm space-y-1.5">
+                                      {formatted.actions.map((action, i) => (
+                                        <li key={i} className="leading-snug">{action}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+
+                                  <div className="mt-auto pt-3 border-t border-current border-opacity-10">
+                                    <p className="text-xs opacity-80 flex items-start">
+                                      <Info className="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+                                      <span>Referência: {formatted.citation_badge}</span>
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      
                       <div className="mt-6 pt-4 border-t border-emerald-100 flex justify-end">
                         <button 
                           onClick={handleAnalyzeVulnerability}
@@ -951,50 +1032,6 @@ export function RiskPrediction() {
                 </div>
               </div>
             </div>
-
-          {/* Active Alerts (Moved to bottom) */}
-          {riskReport && riskReport.evidence_based_alerts.length > 0 && (
-            <div className="space-y-4 pt-4 border-t border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                <AlertTriangle className="w-6 h-6 mr-2 text-amber-600" />
-                Alertas Científicos Identificados
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {riskReport.evidence_based_alerts.map((alert, idx) => {
-                  const formatted = formatAlertForDisplay(alert);
-                  return (
-                    <div key={idx} className={`p-5 rounded-2xl border ${getAlertColor(formatted.severity)} flex flex-col gap-3 shadow-sm`}>
-                      <div className="flex items-start gap-3">
-                        <div className={`flex-shrink-0 mt-1 ${getAlertIconColor(formatted.severity)}`}>
-                          {getAlertIcon(alert.threshold.stressor)}
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-bold capitalize leading-tight mb-1">{formatted.title}</h3>
-                          <p className="text-sm font-medium opacity-90">{formatted.message}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-2 bg-white/50 rounded-xl p-3">
-                        <span className="text-xs font-bold opacity-80 uppercase tracking-wider block mb-2">Ações Recomendadas:</span>
-                        <ul className="list-disc list-inside text-sm space-y-1.5">
-                          {formatted.actions.map((action, i) => (
-                            <li key={i} className="leading-snug">{action}</li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="mt-auto pt-3 border-t border-current border-opacity-10">
-                        <p className="text-xs opacity-80 flex items-start">
-                          <Info className="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
-                          <span>Referência: {formatted.citation_badge}</span>
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </>
       ) : null}
     </div>
