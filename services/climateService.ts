@@ -34,7 +34,7 @@ export interface DailyForecast {
 }
 
 export interface HistoricalSummary {
-  source: 'inmet';
+  source: 'inmet' | 'open-meteo';
   station_name: string;
   station_code: string;
   distance_km: number;
@@ -224,7 +224,7 @@ async function fetchINMETHistorical(
     );
     if (!res.ok) return null;
     const records: any[] = await res.json();
-    if (!records || records.length === 0) return null;
+    if (!records || !Array.isArray(records) || records.length === 0) return null;
 
     // Agrega os dados do período
     let totalPrecip = 0;
@@ -302,6 +302,67 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
  * console.log(data.current.temperature_c);
  * console.log(data.alerts);
  */
+async function fetchOpenMeteoHistorical(
+  lat: number,
+  lng: number,
+  startStr: string,
+  endStr: string
+): Promise<HistoricalSummary | null> {
+  try {
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${startStr}&end_date=${endStr}&daily=temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_sum&timezone=auto`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    
+    if (!data.daily || !data.daily.time || data.daily.time.length === 0) return null;
+
+    let totalPrecip = 0;
+    let tempSum = 0;
+    let tempCount = 0;
+    let frostDays = 0;
+    let heatDays = 0;
+
+    for (let i = 0; i < data.daily.time.length; i++) {
+      const precip = data.daily.precipitation_sum[i];
+      if (precip !== null) totalPrecip += precip;
+
+      const tempMed = data.daily.temperature_2m_mean[i];
+      if (tempMed !== null) {
+        tempSum += tempMed;
+        tempCount++;
+      }
+
+      const minT = data.daily.temperature_2m_min[i];
+      if (minT !== null && minT < 2) {
+        frostDays++;
+      }
+
+      const maxT = data.daily.temperature_2m_max[i];
+      if (maxT !== null && maxT > 35) {
+        heatDays++;
+      }
+    }
+
+    const periodLabel = `${startStr} a ${endStr}`;
+
+    return {
+      source: 'open-meteo',
+      station_name: 'Dados de Satélite / Reanálise (Open-Meteo)',
+      station_code: 'N/A',
+      distance_km: 0,
+      period: periodLabel,
+      avg_temp_c: tempCount > 0 ? Math.round((tempSum / tempCount) * 10) / 10 : 0,
+      total_precipitation_mm: Math.round(totalPrecip),
+      frost_days: frostDays,
+      extreme_heat_days: heatDays,
+      data_available: tempCount > 0,
+    };
+  } catch (e) {
+    console.error("Open-Meteo historical fetch error:", e);
+    return null;
+  }
+}
+
 export async function getClimateData(lat: number, lng: number, selectedSpecies: string[] = []): Promise<ClimateData> {
   const dataSources: string[] = [];
 
@@ -320,6 +381,18 @@ export async function getClimateData(lat: number, lng: number, selectedSpecies: 
 
   // Busca histórico INMET se encontrou estação
   let historical: HistoricalSummary | null = null;
+  
+  const end = new Date();
+  end.setDate(end.getDate() - 2);
+  const start = new Date(end);
+  start.setFullYear(start.getFullYear() - 1);
+
+  const fmt = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+  const startStr = fmt(start);
+  const endStr = fmt(end);
+
   if (inmetStation.status === 'fulfilled' && inmetStation.value) {
     const station = inmetStation.value;
     historical = await fetchINMETHistorical(
@@ -329,6 +402,14 @@ export async function getClimateData(lat: number, lng: number, selectedSpecies: 
     );
     if (historical) {
       dataSources.push(`INMET — Estação ${station.name} (${station.distance_km}km)`);
+    }
+  }
+
+  // Fallback para Open-Meteo Historical se INMET falhar
+  if (!historical) {
+    historical = await fetchOpenMeteoHistorical(lat, lng, startStr, endStr);
+    if (historical) {
+      dataSources.push(`Open-Meteo Archive (Reanálise)`);
     }
   }
 

@@ -1215,13 +1215,34 @@ export const SCIENTIFIC_THRESHOLDS: ClimateThreshold[] = [
  */
 export function getThresholdsForSpecies(species: string): ClimateThreshold[] {
   const term = species.toLowerCase();
-  return SCIENTIFIC_THRESHOLDS.filter(
-    t =>
-      t.species.toLowerCase().includes(term) ||
-      (t.species_scientific?.toLowerCase().includes(term)) ||
-      t.species.toLowerCase().includes('geral') ||
-      t.species.toLowerCase().includes('culturas')
+  
+  const aliases: Record<string, string[]> = {
+    'aves': ['aves', 'galinha', 'frango', 'poedeira', 'caipira', 'pintainha'],
+    'bovinos': ['bovino', 'vaca', 'boi', 'leiteiro', 'corte', 'bezerro'],
+    'suínos': ['suíno', 'porco', 'leitão', 'matriz', 'leitegada'],
+    'tomate': ['tomate', 'tomateiro'],
+    'erva-mate': ['erva-mate', 'mate'],
+    'milho': ['milho'],
+    'soja': ['soja'],
+    'café': ['café', 'cafe', 'cafeeiro'],
+  };
+
+  const matchedCategories = Object.keys(aliases).filter(category => 
+    aliases[category].some(alias => term.includes(alias))
   );
+
+  return SCIENTIFIC_THRESHOLDS.filter(t => {
+    const tSpecies = t.species.toLowerCase();
+    const tScientific = t.species_scientific?.toLowerCase() || '';
+    
+    if (tSpecies.includes(term) || tScientific.includes(term)) return true;
+    if (tSpecies.includes('geral') || tSpecies.includes('culturas')) return true;
+
+    return matchedCategories.some(category => 
+      tSpecies.includes(category) || 
+      aliases[category].some(alias => tSpecies.includes(alias))
+    );
+  });
 }
 
 /**

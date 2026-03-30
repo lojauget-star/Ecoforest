@@ -203,6 +203,7 @@ export function RiskPrediction() {
 
     const vegetalObs = {
       selected_species: cultivationData.species,
+      animal_species: cultivationData.animals,
       system_stage: cultivationData.stage as any,
       observed_problems: cultivationData.problems,
       notes: cultivationData.description
@@ -239,6 +240,7 @@ export function RiskPrediction() {
     try {
       const vegetalObs = {
         selected_species: cultivationData.species,
+        animal_species: cultivationData.animals,
         system_stage: cultivationData.stage as any,
         observed_problems: cultivationData.problems,
         notes: cultivationData.description
@@ -539,11 +541,19 @@ export function RiskPrediction() {
 
               {/* INMET History */}
               <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Dados históricos oficiais INMET</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">
+                  {climateData.historical?.source === 'open-meteo' 
+                    ? 'Dados históricos (Satélite/Reanálise)' 
+                    : 'Dados históricos oficiais INMET'}
+                </h3>
                 
                 {climateData.historical ? (
                   <>
-                    <p className="text-sm text-gray-500 mb-4">Estação {climateData.historical.station_name} ({climateData.historical.distance_km}km) • {climateData.historical.period}</p>
+                    <p className="text-sm text-gray-500 mb-4">
+                      {climateData.historical.source === 'open-meteo' 
+                        ? 'Baseado em dados de satélite e modelos climáticos' 
+                        : `Estação ${climateData.historical.station_name} (${climateData.historical.distance_km}km)`} • {climateData.historical.period}
+                    </p>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="bg-white p-3 rounded-xl border border-gray-100">
                         <p className="text-xs text-gray-500 font-medium">Temp. média</p>

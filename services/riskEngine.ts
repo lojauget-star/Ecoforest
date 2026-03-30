@@ -36,6 +36,7 @@ export interface AnimalObservation {
 
 export interface VegetalObservation {
   selected_species: string[];
+  animal_species: string[];
   system_stage: 'implantacao' | 'desenvolvimento' | 'producao';
   observed_problems: string[];
   notes: string;
@@ -282,6 +283,7 @@ SISTEMA DA PROPRIEDADE
 ════════════════════════════════════════════════════════════
 
 Espécies cultivadas: ${vegetalObs.selected_species.join(', ') || 'não informado'}
+Animais na produção: ${vegetalObs.animal_species.join(', ') || 'não informado'}
 Estágio do sistema: ${vegetalObs.system_stage}
 Problemas observados: ${vegetalObs.observed_problems.join(', ') || 'nenhum relatado'}
 ${vegetalObs.notes ? `Descrição do agricultor: "${vegetalObs.notes}"` : ''}
