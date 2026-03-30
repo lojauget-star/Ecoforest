@@ -238,57 +238,16 @@ export async function submitFeedback(feedback: Feedback): Promise<{ status: stri
 }
 
 export interface VulnerabilityAnalysisRequest {
-  climateSummary: string;
-  alerts: string;
-  lastObservation?: any;
-  cultivationData?: {
-    species: string[];
-    stage: string;
-    problems: string[];
-    description: string;
-    animals: string[];
-  };
+  prompt: string;
 }
 
 export async function analyzeVulnerability(request: VulnerabilityAnalysisRequest): Promise<string> {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     
-    let cultivationText = '';
-    if (request.cultivationData) {
-        cultivationText = `
-O QUE ESTÁ SENDO CULTIVADO E OBSERVADO:
-- Estágio do sistema: ${request.cultivationData.stage}
-- Espécies vegetais cultivadas: ${request.cultivationData.species.join(', ') || 'Nenhuma informada'}
-- Animais na produção: ${request.cultivationData.animals.join(', ') || 'Nenhum informado'}
-- Problemas observados: ${request.cultivationData.problems.join(', ') || 'Nenhum'}
-- Descrição livre do agricultor: ${request.cultivationData.description || 'Nenhuma'}
-
-Responda ESPECIFICAMENTE sobre as espécies e animais informados:
-1. Quais estão mais vulneráveis ao clima previsto?
-2. Os problemas observados têm relação com os eventos climáticos recentes?
-3. Quais ações de manejo preventivo são recomendadas para os próximos 7 dias?
-`;
-    }
-
-    const prompt = `Atue como um especialista em sistemas agroflorestais e bem-estar animal.
-Analise os dados climáticos, alertas e a última observação de bem-estar animal (se houver) para identificar vulnerabilidades do sistema, janelas de risco para pragas e doenças, e fornecer recomendações de manejo preventivo.
-
-DADOS CLIMÁTICOS:
-${request.climateSummary}
-
-ALERTAS ATIVOS:
-${request.alerts}
-
-ÚLTIMA OBSERVAÇÃO DE ANIMAIS:
-${request.lastObservation ? JSON.stringify(request.lastObservation, null, 2) : 'Nenhuma observação recente.'}
-${cultivationText}
-
-Forneça uma análise detalhada e estruturada em Markdown, focando em ações práticas para o agricultor.`;
-
     try {
         const response = await ai.models.generateContent({
             model: "gemini-3.1-pro-preview",
-            contents: prompt,
+            contents: request.prompt,
             config: {
                 temperature: 0.7,
             },

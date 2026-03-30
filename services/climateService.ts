@@ -2,6 +2,8 @@
 // Integração climática dupla: Open-Meteo (tempo real) + INMET (histórico oficial BR)
 // Uso: import { getClimateData } from './climateService';
 
+import { EvidenceBasedAlert } from './scientificThresholds';
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface CurrentWeather {
@@ -59,7 +61,7 @@ export interface ClimateData {
   current: CurrentWeather;
   forecast_7days: DailyForecast[];
   historical: HistoricalSummary | null;
-  alerts: ClimateAlert[];
+  alerts: EvidenceBasedAlert[];
   data_sources: string[];
 }
 
@@ -218,7 +220,7 @@ async function fetchINMETHistorical(
     const endStr = fmt(end);
 
     const res = await fetch(
-      `https://apitempo.inmet.gov.br/estacao/${startStr}/${endStr}/${stationCode}`
+      `https://apitempo.inmet.gov.br/estacao/diaria/${startStr}/${endStr}/${stationCode}`
     );
     if (!res.ok) return null;
     const records: any[] = await res.json();
@@ -230,39 +232,26 @@ async function fetchINMETHistorical(
     let tempCount = 0;
     let frostDays = 0;
     let heatDays = 0;
-    const dailyMinTemps: Record<string, number> = {};
-    const dailyMaxTemps: Record<string, number> = {};
 
     for (const r of records) {
-      const precip = parseFloat(r.CHUVA ?? '0');
+      const precip = parseFloat(r.CHUVA);
       if (!isNaN(precip)) totalPrecip += precip;
 
-      const temp = parseFloat(r.TEM_INS ?? r.TEMP_INS ?? '');
-      if (!isNaN(temp)) {
-        tempSum += temp;
+      const tempMed = parseFloat(r.TEMP_MED);
+      if (!isNaN(tempMed)) {
+        tempSum += tempMed;
         tempCount++;
       }
 
-      const date = r.DT_MEDICAO ?? r.DATA;
-      if (date) {
-        const minT = parseFloat(r.TEM_MIN ?? r.TEMP_MIN ?? '');
-        const maxT = parseFloat(r.TEM_MAX ?? r.TEMP_MAX ?? '');
-        if (!isNaN(minT)) {
-          if (dailyMinTemps[date] === undefined || minT < dailyMinTemps[date])
-            dailyMinTemps[date] = minT;
-        }
-        if (!isNaN(maxT)) {
-          if (dailyMaxTemps[date] === undefined || maxT > dailyMaxTemps[date])
-            dailyMaxTemps[date] = maxT;
-        }
+      const minT = parseFloat(r.TEMP_MIN);
+      if (!isNaN(minT) && minT < 2) {
+        frostDays++;
       }
-    }
 
-    for (const minT of Object.values(dailyMinTemps)) {
-      if (minT < 2) frostDays++;
-    }
-    for (const maxT of Object.values(dailyMaxTemps)) {
-      if (maxT > 35) heatDays++;
+      const maxT = parseFloat(r.TEMP_MAX);
+      if (!isNaN(maxT) && maxT > 35) {
+        heatDays++;
+      }
     }
 
     const periodLabel = `${startStr} a ${endStr}`;
@@ -277,136 +266,12 @@ async function fetchINMETHistorical(
       total_precipitation_mm: Math.round(totalPrecip),
       frost_days: frostDays,
       extreme_heat_days: heatDays,
-      data_available: true,
+      data_available: tempCount > 0,
     };
-  } catch {
+  } catch (e) {
+    console.error("INMET fetch error:", e);
     return null;
   }
-}
-
-// ─── Motor de Alertas ─────────────────────────────────────────────────────────
-
-function generateAlerts(
-  current: CurrentWeather,
-  forecast: DailyForecast[]
-): ClimateAlert[] {
-  const alerts: ClimateAlert[] = [];
-  const now = new Date();
-
-  // Alerta de geada
-  const frostDays = forecast.filter(d => d.frost_risk);
-  if (frostDays.length > 0) {
-    const nextFrost = frostDays[0];
-    alerts.push({
-      type: 'frost',
-      severity: nextFrost.temp_min_c < 0 ? 'emergency' : 'warning',
-      message: `Risco de geada previsto para ${nextFrost.date} (mín. ${nextFrost.temp_min_c}°C)`,
-      affected_systems: [
-        'mudas e plântulas',
-        'culturas de ciclo curto',
-        'animais jovens e recém-nascidos',
-        'sistemas de irrigação',
-      ],
-      recommended_actions: [
-        'Proteger mudas com cobertura morta ou palha',
-        'Recolher animais jovens para abrigo',
-        'Desligar e esvaziar sistemas de irrigação',
-        'Antecipar colheita de culturas sensíveis ao frio',
-      ],
-      valid_until: nextFrost.date,
-    });
-  }
-
-  // Alerta de estresse térmico para animais
-  const heatDays = forecast.filter(d => d.heat_stress_risk);
-  if (heatDays.length > 0 || current.temperature_c > 32) {
-    const maxTemp = Math.max(current.temperature_c, ...heatDays.map(d => d.temp_max_c));
-    alerts.push({
-      type: 'heat_stress',
-      severity: maxTemp > 38 ? 'emergency' : maxTemp > 35 ? 'warning' : 'watch',
-      message: `Estresse térmico elevado (${maxTemp}°C). Bovinos leiteiros reduzem produção acima de 32°C.`,
-      affected_systems: [
-        'bovinos leiteiros',
-        'suínos',
-        'aves de postura',
-        'animais gestantes',
-      ],
-      recommended_actions: [
-        'Garantir sombra e água fresca em abundância',
-        'Mover ordenha para o período mais fresco (antes das 9h)',
-        'Aumentar frequência de observação de sinais de estresse (ofegância, agrupamento)',
-        'Molhar o telhado dos abrigos se disponível',
-      ],
-      valid_until: heatDays[heatDays.length - 1]?.date ?? new Date(now.getTime() + 86400000).toISOString().split('T')[0],
-    });
-  }
-
-  // Alerta de seca
-  const droughtDays = forecast.filter(d => d.drought_risk);
-  if (droughtDays.length >= 3) {
-    alerts.push({
-      type: 'drought',
-      severity: droughtDays.length >= 5 ? 'warning' : 'watch',
-      message: `${droughtDays.length} dias sem chuva previstos. Monitorar umidade do solo e pastagens.`,
-      affected_systems: [
-        'pastagens e capineiras',
-        'mudas recentes (< 1 ano)',
-        'hortas e cultivos anuais',
-        'oferta de água para animais',
-      ],
-      recommended_actions: [
-        'Priorizar irrigação de mudas recém-transplantadas',
-        'Verificar reservatórios e aguadas',
-        'Evitar poda ou intervenções que aumentem estresse hídrico',
-        'Fazer mulching ao redor das mudas para reter umidade',
-      ],
-      valid_until: droughtDays[droughtDays.length - 1].date,
-    });
-  }
-
-  // Alerta de chuva intensa
-  const heavyRainDays = forecast.filter(d => d.precipitation_mm > 40);
-  if (heavyRainDays.length > 0) {
-    alerts.push({
-      type: 'heavy_rain',
-      severity: heavyRainDays[0].precipitation_mm > 80 ? 'warning' : 'watch',
-      message: `Chuva intensa prevista: ${heavyRainDays[0].precipitation_mm}mm em ${heavyRainDays[0].date}`,
-      affected_systems: [
-        'solo descoberto (risco de erosão)',
-        'cursos d\'água e várzeas',
-        'instalações e abrigos',
-      ],
-      recommended_actions: [
-        'Verificar escoamento e drenagem da propriedade',
-        'Cobrir áreas de solo exposto',
-        'Afastar animais de várzeas e baixadas',
-        'Verificar integridade de telhados e cercas',
-      ],
-      valid_until: heavyRainDays[0].date,
-    });
-  }
-
-  // Alerta de UV alto
-  const highUVDays = forecast.filter(d => d.uv_index_max >= 8);
-  if (highUVDays.length > 0 || current.uv_index >= 8) {
-    alerts.push({
-      type: 'high_uv',
-      severity: current.uv_index >= 11 ? 'warning' : 'watch',
-      message: `Índice UV elevado (${Math.max(current.uv_index, ...highUVDays.map(d => d.uv_index_max))}). Trabalho a campo: proteger-se entre 10h e 16h.`,
-      affected_systems: [
-        'trabalhadores rurais',
-        'animais de pelagem clara',
-      ],
-      recommended_actions: [
-        'Evitar trabalho pesado a campo entre 10h e 16h',
-        'Usar proteção solar, chapéu e roupas adequadas',
-        'Garantir sombra para animais sensíveis',
-      ],
-      valid_until: highUVDays[highUVDays.length - 1]?.date ?? new Date(now.getTime() + 86400000).toISOString().split('T')[0],
-    });
-  }
-
-  return alerts;
 }
 
 // ─── Utilitário Haversine ─────────────────────────────────────────────────────
@@ -437,7 +302,7 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
  * console.log(data.current.temperature_c);
  * console.log(data.alerts);
  */
-export async function getClimateData(lat: number, lng: number): Promise<ClimateData> {
+export async function getClimateData(lat: number, lng: number, selectedSpecies: string[] = []): Promise<ClimateData> {
   const dataSources: string[] = [];
 
   // Busca Open-Meteo e INMET em paralelo para não dobrar o tempo de espera
@@ -467,63 +332,14 @@ export async function getClimateData(lat: number, lng: number): Promise<ClimateD
     }
   }
 
-  const alerts = generateAlerts(current, forecast);
-
   return {
     location: { lat, lng },
     fetched_at: new Date().toISOString(),
     current,
     forecast_7days: forecast,
     historical,
-    alerts,
+    alerts: [],
     data_sources: dataSources,
   };
 }
 
-/**
- * getClimateRiskSummary(data)
- * Retorna um resumo textual para usar como contexto no prompt do Gemini
- * Permite que a IA do Brota analise clima + BEA + SAF de forma integrada
- */
-export function getClimateRiskSummary(data: ClimateData): string {
-  const lines: string[] = [
-    `=== DADOS CLIMÁTICOS DA PROPRIEDADE ===`,
-    `Consultado em: ${new Date(data.fetched_at).toLocaleString('pt-BR')}`,
-    ``,
-    `CONDIÇÕES ATUAIS:`,
-    `• Temperatura: ${data.current.temperature_c}°C (sensação ${data.current.feels_like_c}°C)`,
-    `• Umidade: ${data.current.humidity_percent}%`,
-    `• Precipitação hoje: ${data.current.precipitation_mm}mm`,
-    `• Índice UV: ${data.current.uv_index}`,
-    `• Condição: ${data.current.weather_description}`,
-    ``,
-    `PREVISÃO 7 DIAS:`,
-    ...data.forecast_7days.map(
-      d =>
-        `• ${d.date}: ${d.temp_min_c}°C–${d.temp_max_c}°C, ${d.precipitation_mm}mm chuva` +
-        (d.frost_risk ? ' - ALERTA DE GEADA' : '') +
-        (d.heat_stress_risk ? ' - ALERTA DE ESTRESSE TÉRMICO' : '') +
-        (d.drought_risk ? ' - ALERTA DE SECA' : '')
-    ),
-  ];
-
-  if (data.historical) {
-    lines.push(
-      ``,
-      `HISTÓRICO ANUAL (INMET — ${data.historical.station_name}):`,
-      `• Temperatura média: ${data.historical.avg_temp_c}°C`,
-      `• Precipitação total: ${data.historical.total_precipitation_mm}mm`,
-      `• Dias de geada: ${data.historical.frost_days}`,
-      `• Dias de calor extremo (>35°C): ${data.historical.extreme_heat_days}`
-    );
-  }
-
-  if (data.alerts.length > 0) {
-    lines.push(``, `ALERTAS ATIVOS (${data.alerts.length}):`);
-    data.alerts.forEach(a => {
-      lines.push(`• [${a.severity.toUpperCase()}] ${a.message}`);
-    });
-  }
-
-  return lines.join('\n');
-}
