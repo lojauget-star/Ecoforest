@@ -2,6 +2,31 @@ import { GoogleGenAI, Type } from "@google/genai";
 import type { PlanRequest, PlanResponse, Feedback, QuizAnswers, WFOEnrichedResponse, WFOSpecies, RiskPredictionRequest, RiskPredictionResponse } from '../types';
 import { prompts } from '../locales/prompts';
 
+// Função auxiliar para rotear a requisição de IA
+// No desenvolvimento local (AI Studio) usa a chave injetada.
+// Em produção (Netlify) usa a Serverless Function para proteger a chave.
+async function generateContentProxy(payload: any) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  
+  if (apiKey) {
+    const ai = new GoogleGenAI({ apiKey });
+    return await ai.models.generateContent(payload);
+  }
+  
+  const response = await fetch('/.netlify/functions/gemini', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.error || `Erro no servidor: ${response.status}`);
+  }
+  
+  return await response.json();
+}
+
 // Schema para a resposta do plano agroflorestal
 const planResponseSchema = {
   type: Type.OBJECT,
@@ -78,8 +103,7 @@ export async function getAgroforestryPlan(request: PlanRequest, language: 'pt' |
     .replace('{animalContextText}', animalContextText);
 
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const response = await ai.models.generateContent({
+    const response = await generateContentProxy({
         model: "gemini-3.1-pro-preview",
         contents: userPrompt,
         config: {
@@ -242,10 +266,8 @@ export interface VulnerabilityAnalysisRequest {
 }
 
 export async function analyzeVulnerability(request: VulnerabilityAnalysisRequest): Promise<string> {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    
     try {
-        const response = await ai.models.generateContent({
+        const response = await generateContentProxy({
             model: "gemini-3.1-pro-preview",
             contents: request.prompt,
             config: {
@@ -263,8 +285,7 @@ export async function getSustainabilityTips(answers: QuizAnswers, language: 'pt'
     const { systemInstruction, userPromptTemplate } = prompts[language].quiz;
     const answersText = Object.entries(answers).map(([k, v]) => `${k}: ${v}`).join('\n');
     
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const response = await ai.models.generateContent({
+    const response = await generateContentProxy({
         model: "gemini-3-flash-preview", 
         contents: userPromptTemplate.replace('{answersText}', answersText),
         config: { systemInstruction, temperature: 0.8 },
@@ -305,8 +326,7 @@ export async function getRiskPrediction(request: RiskPredictionRequest, language
     };
 
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        const response = await ai.models.generateContent({
+        const response = await generateContentProxy({
             model: "gemini-3.1-pro-preview",
             contents: userPrompt,
             config: {
