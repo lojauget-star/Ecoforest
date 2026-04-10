@@ -27,7 +27,7 @@ export type AppView = 'planner' | 'producers' | 'risk';
 
 export default function App() {
   const { language, t } = useI18n();
-  const [view, setView] = useState<AppView>('planner');
+  const [view, setView] = useState<AppView>('risk');
   const [planRequest, setPlanRequest] = useState<Partial<PlanRequest>>({
     location: { lat: -27.6, lng: -48.5 },
     soil_type: "argiloso",
