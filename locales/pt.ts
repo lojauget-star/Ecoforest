@@ -353,6 +353,8 @@ export default {
     beef_cattle: "Bovinos de corte",
     swine: "Suínos",
     free_range_poultry: "Aves caipiras",
+    Aves: "Aves caipiras",
+    Suínos: "Suínos",
     sheep: "Ovinos",
     goats: "Caprinos",
     bees: "Abelhas",

@@ -112,12 +112,12 @@ export default function App() {
     <div className="min-h-screen bg-transparent font-sans flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
       <Navbar currentView={view} onViewChange={setView} />
       <main 
-        className="flex-grow p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pt-0 sm:pt-16 lg:pt-24 pb-32 sm:pb-36 animate-fade-in"
+        className="flex-grow p-4 sm:p-6 lg:p-8 max-w-[1800px] mx-auto w-full pt-0 sm:pt-16 lg:pt-24 pb-32 sm:pb-36 animate-fade-in"
         style={{ paddingBottom: `calc(90px + env(safe-area-inset-bottom))` }}
       >
         {view === 'planner' ? (
            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-             <div className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 lg:z-30">
+             <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24 lg:z-30">
                <div className="glass-card p-6 rounded-3xl shadow-futuristic relative">
                    <PlanningForm
                      requestData={planRequest}
@@ -128,7 +128,7 @@ export default function App() {
                    />
                </div>
              </div>
-             <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-8">
+             <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-8">
                <div className="glass-card p-1.5 rounded-3xl shadow-futuristic overflow-hidden">
                    <MapEditor 
                      center={planRequest.location || { lat: -27.6, lng: -48.5 }}

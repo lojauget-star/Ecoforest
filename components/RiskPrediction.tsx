@@ -974,26 +974,27 @@ export function RiskPrediction() {
                   {beaObservations.length > 0 && (
                     <div className="pt-8 border-t border-gray-100">
                       <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-5">{t('risk.lastRecords')}</h4>
-                      <div className="space-y-4 relative before:absolute before:left-[23px] before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
+                      <div className="space-y-6 relative before:absolute before:left-[27px] before:top-2 before:bottom-2 before:w-[1px] before:bg-gray-100">
                         {beaObservations.slice(0, 3).map(obs => {
                           let StatusIcon = Activity;
-                          let statusColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-                          let statusLabel = t(`common.${obs.animal.occurrences}`);
+                          let statusColor = 'bg-emerald-50 text-emerald-600 border-emerald-100';
+                          const occurrencesKey = (obs.animal.occurrences || 'none').toLowerCase();
+                          let statusLabel = t(`common.${occurrencesKey}`);
                           
-                          if (obs.animal.occurrences === 'prostration') {
-                            statusColor = 'bg-amber-100 text-amber-800 border-amber-200';
+                          if (occurrencesKey === 'prostration') {
+                            statusColor = 'bg-amber-50 text-amber-600 border-amber-100';
                             StatusIcon = AlertTriangle;
-                          } else if (obs.animal.occurrences === 'diarrhea') {
-                            statusColor = 'bg-red-100 text-red-800 border-red-200';
+                          } else if (occurrencesKey === 'diarrhea') {
+                            statusColor = 'bg-red-50 text-red-600 border-red-100';
                             StatusIcon = AlertCircle;
-                          } else if (obs.animal.occurrences === 'none') {
-                            statusColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                          } else if (occurrencesKey === 'none') {
+                            statusColor = 'bg-emerald-50 text-emerald-600 border-emerald-100';
                             StatusIcon = CheckCircle2;
                           }
 
                           return (
-                            <div key={obs.id} className="p-4 bg-white rounded-xl border border-gray-100 flex gap-4 relative group shadow-sm hover:shadow-md transition-all ml-2">
-                              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${statusColor} shadow-sm z-10 -ml-[33px] bg-white ring-4 ring-white`}>
+                            <div key={obs.id} className="p-4 bg-white rounded-2xl border border-gray-100 flex gap-4 relative group shadow-sm hover:shadow-md transition-all ml-4">
+                              <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${statusColor} shadow-inner z-10 -ml-[40px] bg-white ring-4 ring-white border border-white/50`}>
                                 <StatusIcon className="w-5 h-5" />
                               </div>
                               <div className="flex-grow">
@@ -1002,7 +1003,7 @@ export function RiskPrediction() {
                                     <div className="bg-emerald-50 text-emerald-600 p-2 rounded-lg">
                                        <AnimalIcon species={obs.animal.species} className="w-4 h-4" />
                                     </div>
-                                    <span className="font-bold text-gray-900">{t(`categories.${obs.animal.species}`)}</span>
+                                    <span className="font-bold text-gray-900">{t(`categories.${obs.animal.species?.toLowerCase()}`)}</span>
                                   </div>
                                   <div className="flex items-center gap-2">
                                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded-md">{new Date(obs.date).toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US')}</span>

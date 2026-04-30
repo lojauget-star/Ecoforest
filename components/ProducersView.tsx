@@ -741,8 +741,8 @@ export function ProducersView({ filter, onClearFilter }: ProducersViewProps) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-4 xl:col-span-3 h-[80vh] flex flex-col gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-[1800px] mx-auto w-full">
+                <div className="lg:col-span-5 xl:col-span-4 h-[85vh] flex flex-col gap-4">
                     {/* Search & Filter Bar */}
                     <div className="flex gap-3 px-1">
                         <div className="relative flex-grow group">
@@ -795,7 +795,7 @@ export function ProducersView({ filter, onClearFilter }: ProducersViewProps) {
                     )}
                 </div>
 
-                <div className="lg:col-span-8 xl:col-span-9">
+                <div className="hidden lg:block lg:col-span-7 xl:col-span-8 bg-white/40 backdrop-blur-sm rounded-[2.5rem] border border-white/50 overflow-hidden shadow-futuristic h-[85vh]">
                     <ProducerMap producers={filteredProducers} activeProducer={activeProducer} onSelectProducer={setActiveProducer} />
                 </div>
             </div>

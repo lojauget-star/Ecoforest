@@ -111,30 +111,36 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
       )}
 
       <div>
-        <div className="flex items-center justify-between mb-2">
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight font-display leading-none uppercase">{t('form.title1')}</h2>
-            <div className="bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
-                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{t('form.step').replace('{current}', '1').replace('{total}', '2')}</span>
+        <div className="flex flex-col sm:flex-row items-start justify-between mb-6 gap-6">
+            <div className="flex-grow">
+               <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight font-display leading-tight uppercase mb-3">{t('form.title1')}</h2>
+               <div className="h-2 w-16 bg-emerald-500 rounded-full"></div>
+            </div>
+            <div className="flex flex-col items-center justify-center bg-white min-w-[80px] h-[80px] rounded-full border-2 border-emerald-100 shadow-soft shrink-0 p-2 text-center">
+                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest leading-tight">{t('form.step').split(' {current}')[0]}</span>
+                <div className="flex items-baseline gap-1 mt-1">
+                   <span className="text-2xl font-black text-emerald-700 leading-none">1</span>
+                   <span className="text-xs font-bold text-emerald-300">/ 2</span>
+                </div>
             </div>
         </div>
-        <div className="h-1.5 w-12 bg-emerald-500 rounded-full mb-4"></div>
-        <p className="text-gray-500 font-medium">{t('form.subtitle1')}</p>
+        <p className="text-gray-500 font-medium leading-relaxed">{t('form.subtitle1')}</p>
       </div>
       
       <div className="space-y-6">
         <div>
           <Label>{t('form.area_label')}</Label>
-          <div className="w-full px-5 py-4 bg-emerald-50/50 border border-emerald-100 rounded-[1.25rem] shadow-inner flex items-center justify-between">
-            <span className="text-emerald-700 font-black text-lg font-mono">{requestData.area_ha?.toFixed(3) || '0.000'}</span>
-            <span className="text-emerald-600 font-black text-[10px] uppercase tracking-widest">{t('form.hectares')}</span>
+          <div className="w-full px-5 py-4 bg-emerald-50/50 border border-emerald-100 rounded-[1.25rem] shadow-inner flex items-center justify-between gap-4">
+            <span className="text-emerald-700 font-black text-lg font-mono whitespace-nowrap">{requestData.area_ha?.toFixed(3) || '0.000'}</span>
+            <span className="text-emerald-600 font-black text-[10px] uppercase tracking-widest whitespace-nowrap">{t('form.hectares')}</span>
           </div>
           <p className="text-[10px] text-gray-400 font-medium mt-2">{t('form.area_note')}</p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="soil_type" showSpinner={isEnriching}>{t('form.soil_label')}</Label>
-            <Select id="soil_type" value={requestData.soil_type} onChange={e => updateRequestData({ soil_type: e.target.value })} disabled={isEnriching}>
+            <Select id="soil_type" value={requestData.soil_type} onChange={e => updateRequestData({ soil_type: e.target.value })} disabled={isEnriching} className="w-full">
               <option value="argiloso">{t('form.soil_options.clay')}</option>
               <option value="arenoso">{t('form.soil_options.sandy')}</option>
               <option value="siltoso">{t('form.soil_options.silty')}</option>
@@ -274,14 +280,17 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
         </div>
       </div>
 
-      <div className="pt-4">
-        <div className="flex items-center justify-between mb-2">
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight font-display leading-none uppercase">{t('form.title2')}</h2>
-            <div className="bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+      <div className="pt-8 border-t border-gray-100">
+        <div className="flex flex-col sm:flex-row items-baseline justify-between mb-4 gap-4">
+            <div className="flex-grow">
+               <h2 className="text-3xl font-black text-gray-900 tracking-tight font-display leading-tight uppercase mb-2">{t('form.title2')}</h2>
+               <div className="h-1.5 w-12 bg-emerald-500 rounded-full"></div>
+            </div>
+            <div className="bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100 shadow-sm shrink-0">
                 <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{t('form.step').replace('{current}', '2').replace('{total}', '2')}</span>
             </div>
         </div>
-        <p className="text-sm text-gray-500 font-medium mt-1">{t('form.subtitle2')}</p>
+        <p className="text-gray-500 font-medium leading-relaxed">{t('form.subtitle2')}</p>
       </div>
 
       <div className="space-y-4">
