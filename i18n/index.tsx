@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { translations } from '../locales/translations';
 
-type Language = 'pt' | 'en';
+type Language = 'pt' | 'en' | 'de';
 
 interface I18nContextType {
   language: Language;
@@ -13,10 +13,19 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('pt');
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('brota_lang');
+      if (saved === 'pt' || saved === 'en' || saved === 'de') return saved;
+    }
+    return 'en';
+  });
 
   const changeLanguage = useCallback((lang: Language) => {
     setLanguage(lang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('brota_lang', lang);
+    }
   }, []);
 
   const t = useCallback((key: string): string => {

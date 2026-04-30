@@ -62,7 +62,7 @@ export default function App() {
     setError(null);
     setPlanResponse(null);
     try {
-      const response = await getAgroforestryPlan({ ...planRequest, wfo_species: wfoSpecies } as PlanRequest, language);
+      const response = await getAgroforestryPlan({ ...planRequest, wfo_species: wfoSpecies } as PlanRequest, language as any);
       setPlanResponse(response);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('error.unknown'));
@@ -111,7 +111,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
       <Navbar currentView={view} onViewChange={setView} />
-      <main className="flex-grow p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pt-24">
+      <main className="flex-grow p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pt-20 pb-24">
         {view === 'planner' ? (
            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
              <div className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24">

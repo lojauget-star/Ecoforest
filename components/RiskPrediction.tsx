@@ -25,25 +25,25 @@ interface BEAObservation {
 }
 
 const SPECIES_CATEGORIES = {
-  'Frutíferas': ['Banana', 'Abacate', 'Maracujá', 'Goiaba', 'Citros', 'Amora', 'Jabuticaba', 'Uvaia', 'Açaí'],
-  'Madeireiras': ['Eucalipto', 'Bracatinga', 'Araucária', 'Cedro', 'Canafístula', 'Timbaúva'],
-  'Anuais': ['Milho', 'Feijão', 'Mandioca', 'Batata-doce', 'Abóbora', 'Hortaliças'],
-  'Forrageiras': ['Capim-elefante', 'Tifton', 'Brachiaria', 'Aveia', 'Azevém'],
-  'Medicinais/Aromáticas': ['Erva-cidreira', 'Hortelã', 'Guaco', 'Erva-mate']
+  'fruit': ['banana', 'avocado', 'passionfruit', 'guava', 'citrus', 'blackberry', 'jabuticaba', 'uvaia', 'acai'],
+  'timber': ['eucalyptus', 'bracatinga', 'araucaria', 'cedar', 'canafistula', 'timbauva'],
+  'annuals': ['corn', 'beans', 'cassava', 'sweet_potato', 'pumpkin', 'vegetables'],
+  'forage': ['elephant_grass', 'tifton', 'brachiaria', 'oats', 'ryegrass'],
+  'medicinal': ['lemon_balm', 'mint', 'guaco', 'yerba_mate']
 };
 
 const ANIMAL_CATEGORIES = {
-  'Animais na produção': ['Bovinos de leite', 'Bovinos de corte', 'Suínos', 'Aves caipiras', 'Ovinos', 'Caprinos', 'Abelhas']
+  'animals': ['dairy_cattle', 'beef_cattle', 'swine', 'free_range_poultry', 'sheep', 'goats', 'bees']
 };
 
 const PROBLEM_CATEGORIES = {
-  'Pragas': ['Lagartas', 'Pulgões', 'Ácaros', 'Formigas cortadeiras', 'Broca', 'Mosca-das-frutas'],
-  'Doenças': ['Mancha foliar', 'Ferrugem', 'Podridão de raiz', 'Míldio', 'Antracnose'],
-  'Sintomas gerais': ['Amarelecimento', 'Queda de folhas', 'Frutos caindo precocemente', 'Crescimento lento', 'Galhos secos']
+  'pests': ['caterpillars', 'aphids', 'mites', 'ants', 'borer', 'fruit_fly'],
+  'diseases': ['leaf_spot', 'rust', 'root_rot', 'mildew', 'anthracnose'],
+  'symptoms': ['yellowing', 'leaf_drop', 'fruit_drop', 'slow_growth', 'dry_branches']
 };
 
 export function RiskPrediction() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   
   // State
   const [locationMode, setLocationMode] = useState<'select' | 'dashboard'>('select');
@@ -59,10 +59,10 @@ export function RiskPrediction() {
   const [isLoadingClimate, setIsLoadingClimate] = useState(false);
   
   const [beaForm, setBeaForm] = useState({
-    species: 'Bovinos leiteiros',
-    behavior: 'Normal',
-    occurrences: 'Nenhuma',
-    body_condition: 'Boa',
+    species: 'dairy_cattle',
+    behavior: 'normal',
+    occurrences: 'none',
+    body_condition: 'good',
     notes: ''
   });
   const [beaObservations, setBeaObservations] = useState<BEAObservation[]>([]);
@@ -80,7 +80,7 @@ export function RiskPrediction() {
   }>({
     species: [],
     animals: [],
-    stage: 'Implantação (0 a 2 anos)',
+    stage: 'implementation_stage',
     problems: [],
     description: ''
   });
@@ -126,7 +126,7 @@ export function RiskPrediction() {
         }
 
         setIsSearching(true);
-        fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchQuery)}&count=5&language=pt&format=json`)
+        fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchQuery)}&count=5&language=${language === 'pt' ? 'pt' : 'en'}&format=json`)
           .then(res => res.json())
           .then(data => {
             setSearchResults(data.results || []);
@@ -334,11 +334,11 @@ export function RiskPrediction() {
 
   // Render Helpers
   const getUVClassification = (uv: number) => {
-    if (uv <= 2) return { text: 'Baixo', color: 'text-emerald-600' };
-    if (uv <= 5) return { text: 'Moderado', color: 'text-amber-600' };
-    if (uv <= 7) return { text: 'Alto', color: 'text-orange-600' };
-    if (uv <= 10) return { text: 'Muito Alto', color: 'text-red-600' };
-    return { text: 'Extremo', color: 'text-purple-600' };
+    if (uv <= 2) return { text: t('risk.level_low'), color: 'text-emerald-600' };
+    if (uv <= 5) return { text: t('risk.level_medium'), color: 'text-amber-600' };
+    if (uv <= 7) return { text: t('risk.level_high'), color: 'text-orange-600' };
+    if (uv <= 10) return { text: t('risk.level_high'), color: 'text-red-600' };
+    return { text: t('risk.level_high'), color: 'text-purple-600' };
   };
 
   const getAlertIcon = (type: string) => {
@@ -374,8 +374,8 @@ export function RiskPrediction() {
       <div className="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
           <MapPin className="w-12 h-12 text-emerald-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Onde fica sua propriedade?</h2>
-          <p className="text-gray-600 mb-8">Precisamos da sua localização para buscar dados climáticos precisos e gerar alertas de risco.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('risk.title')}?</h2>
+          <p className="text-gray-600 mb-8">{t('risk.description')}</p>
           
           <div className="space-y-4">
             <button
@@ -384,14 +384,14 @@ export function RiskPrediction() {
               className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center disabled:opacity-50"
             >
               {isLocating ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <MapPin className="w-5 h-5 mr-2" />}
-              Usar minha localização atual
+              {t('risk.use_my_location')}
             </button>
             
             {locationError && <p className="text-sm text-red-600">{locationError}</p>}
             
             <div className="relative flex items-center py-2">
               <div className="flex-grow border-t border-gray-200"></div>
-              <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">ou busque manualmente</span>
+              <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">{t('risk.search_manually')}</span>
               <div className="flex-grow border-t border-gray-200"></div>
             </div>
             
@@ -400,7 +400,7 @@ export function RiskPrediction() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Digite o nome da cidade ou coordenadas..."
+                  placeholder={t('risk.location_label')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
@@ -436,7 +436,7 @@ export function RiskPrediction() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Painel de riscos da propriedade</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('risk.title')}</h1>
           <div className="flex items-center text-gray-500 mt-1">
             <MapPin className="w-4 h-4 mr-1" />
             <span>{selectedLocation?.name} ({selectedLocation?.lat.toFixed(4)}, {selectedLocation?.lng.toFixed(4)})</span>
@@ -444,7 +444,7 @@ export function RiskPrediction() {
               onClick={() => setLocationMode('select')}
               className="ml-3 text-emerald-600 hover:text-emerald-700 text-sm font-medium flex items-center"
             >
-              <Edit2 className="w-3 h-3 mr-1" /> Alterar localização
+              <Edit2 className="w-3 h-3 mr-1" /> {t('risk.change_location')}
             </button>
           </div>
         </div>
@@ -462,7 +462,7 @@ export function RiskPrediction() {
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-gray-900 flex items-center">
               <CloudLightning className="w-6 h-6 mr-2 text-emerald-600" />
-              Clima e Previsão
+              {t('risk.forecast_7days')}
             </h2>
             
             {/* Current Condition Cards */}
@@ -472,9 +472,9 @@ export function RiskPrediction() {
                 <Thermometer className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Temperatura</p>
+                <p className="text-sm text-gray-500 font-medium">{t('risk.temperature')}</p>
                 <p className="text-2xl font-bold text-gray-900">{climateData.current.temperature_c}°C</p>
-                <p className="text-xs text-gray-400">Sensação: {climateData.current.feels_like_c}°C</p>
+                <p className="text-xs text-gray-400">{t('risk.feels_like')}: {climateData.current.feels_like_c}°C</p>
               </div>
             </div>
             
@@ -483,7 +483,7 @@ export function RiskPrediction() {
                 <Droplets className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Umidade</p>
+                <p className="text-sm text-gray-500 font-medium">{t('risk.humidity')}</p>
                 <p className="text-2xl font-bold text-gray-900">{climateData.current.humidity_percent}%</p>
               </div>
             </div>
@@ -493,11 +493,11 @@ export function RiskPrediction() {
                 <CloudRain className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Precipitação</p>
+                <p className="text-sm text-gray-500 font-medium">{t('risk.precipitation')}</p>
                 <p className="text-2xl font-bold text-gray-900">{climateData.current.precipitation_mm}mm</p>
                 {(() => {
                   const dryDays = climateData.forecast_7days.filter(d => d.drought_risk).length;
-                  return dryDays >= 3 ? <p className="text-xs text-amber-600 font-medium">{dryDays} dias sem chuva previstos</p> : null;
+                  return dryDays >= 3 ? <p className="text-xs text-amber-600 font-medium">{dryDays} {t('risk.days_without_rain')}</p> : null;
                 })()}
               </div>
             </div>
@@ -507,7 +507,7 @@ export function RiskPrediction() {
                 <Sun className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Índice UV</p>
+                <p className="text-sm text-gray-500 font-medium">{t('risk.uv_index')}</p>
                 <p className="text-2xl font-bold text-gray-900">{climateData.current.uv_index}</p>
                 <p className={`text-xs font-medium ${getUVClassification(climateData.current.uv_index).color}`}>
                   {getUVClassification(climateData.current.uv_index).text}
@@ -520,7 +520,7 @@ export function RiskPrediction() {
                 <Thermometer className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Temp. do Solo (6cm)</p>
+                <p className="text-sm text-gray-500 font-medium">{t('risk.soil_temp')}</p>
                 <p className="text-2xl font-bold text-gray-900">{climateData.current.soil_temperature_c ?? '--'}°C</p>
               </div>
             </div>
@@ -530,7 +530,7 @@ export function RiskPrediction() {
                 <Droplets className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Umidade do Solo</p>
+                <p className="text-sm text-gray-500 font-medium">{t('risk.soil_moisture')}</p>
                 <p className="text-2xl font-bold text-gray-900">{climateData.current.soil_moisture_percent ?? '--'}%</p>
               </div>
             </div>
@@ -541,12 +541,12 @@ export function RiskPrediction() {
               <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 overflow-x-auto">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
                   <Calendar className="w-5 h-5 mr-2 text-emerald-600" />
-                  Previsão 7 dias
+                  {t('risk.forecast_7days')}
                 </h3>
                 <div className="flex gap-4 min-w-max">
                   {climateData.forecast_7days.map((day, i) => {
                     const dateObj = new Date(day.date + 'T12:00:00');
-                    const dayName = dateObj.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
+                    const dayName = dateObj.toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US', { weekday: 'short' }).replace('.', '');
                     
                     let barColor = 'bg-gray-200';
                     if (day.frost_risk) barColor = 'bg-purple-500';
@@ -571,44 +571,46 @@ export function RiskPrediction() {
                 </div>
               </div>
 
-              {/* INMET History */}
               <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-1">
                   {climateData.historical?.source === 'open-meteo' 
-                    ? 'Dados históricos (Satélite/Reanálise)' 
-                    : 'Dados históricos oficiais INMET'}
+                    ? t('risk.historical_source_satellite') 
+                    : t('risk.historical_source_official')}
                 </h3>
                 
                 {climateData.historical ? (
                   <>
                     <p className="text-sm text-gray-500 mb-4">
                       {climateData.historical.source === 'open-meteo' 
-                        ? 'Baseado em dados de satélite e modelos climáticos' 
-                        : `Estação ${climateData.historical.station_name} (${climateData.historical.distance_km}km)`} • {climateData.historical.period}
+                        ? t('risk.historical_satellite_desc') 
+                        : t('risk.historical_station_desc')
+                           .replace('{name}', climateData.historical.station_name)
+                           .replace('{distance}', climateData.historical.distance_km.toString())
+                           .replace('{period}', climateData.historical.period)}
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="bg-white p-3 rounded-xl border border-gray-100">
-                        <p className="text-xs text-gray-500 font-medium">Temp. média</p>
+                        <p className="text-xs text-gray-500 font-medium">{t('risk.avg_temp')}</p>
                         <p className="text-lg font-bold text-gray-900">{climateData.historical.avg_temp_c}°C</p>
                       </div>
                       <div className="bg-white p-3 rounded-xl border border-gray-100">
-                        <p className="text-xs text-gray-500 font-medium">Precipitação anual</p>
+                        <p className="text-xs text-gray-500 font-medium">{t('risk.annual_precip')}</p>
                         <p className="text-lg font-bold text-gray-900">{climateData.historical.total_precipitation_mm}mm</p>
                       </div>
                       <div className="bg-white p-3 rounded-xl border border-gray-100">
-                        <p className="text-xs text-gray-500 font-medium">Dias de geada</p>
+                        <p className="text-xs text-gray-500 font-medium">{t('risk.frost_days')}</p>
                         <p className="text-lg font-bold text-gray-900">{climateData.historical.frost_days}</p>
                       </div>
                       <div className="bg-white p-3 rounded-xl border border-gray-100">
-                        <p className="text-xs text-gray-500 font-medium">Calor extremo</p>
-                        <p className="text-lg font-bold text-gray-900">{climateData.historical.extreme_heat_days} dias</p>
+                        <p className="text-xs text-gray-500 font-medium">{t('risk.extreme_heat')}</p>
+                        <p className="text-lg font-bold text-gray-900">{climateData.historical.extreme_heat_days} {t('risk.days')}</p>
                       </div>
                     </div>
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full py-6 text-center">
                     <Info className="w-8 h-8 text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-500">Dados históricos indisponíveis para esta região no momento.</p>
+                    <p className="text-sm text-gray-500">{language === 'pt' ? 'Dados históricos indisponíveis para esta região no momento.' : 'Historical data unavailable for this region at the moment.'}</p>
                   </div>
                 )}
               </div>
@@ -619,7 +621,7 @@ export function RiskPrediction() {
           <div className="space-y-4 pt-4 border-t border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 flex items-center">
               <MapPin className="w-6 h-6 mr-2 text-emerald-600" />
-              Contexto da Propriedade
+              {t('risk.section_cultivation')}
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
@@ -628,20 +630,20 @@ export function RiskPrediction() {
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-bold text-gray-900 flex items-center">
                     <Sprout className="w-5 h-5 mr-2 text-emerald-600" />
-                    O que você está cultivando e observando
+                    {t('risk.growing_and_observing')}
                   </h3>
                   <button 
                     onClick={clearCultivationData}
                     className="text-xs text-gray-500 hover:text-red-600 flex items-center transition-colors"
                   >
                     <Trash2 className="w-3 h-3 mr-1" />
-                    Limpar seleção
+                    {t('risk.clear_selection')}
                   </button>
                 </div>
 
                 {/* Block 1 - Cultivos e espécies vegetais */}
                 <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">1. Cultivos e espécies vegetais</h4>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('risk.crops_and_plants')}</h4>
                   
                   <div className="flex gap-2 mb-3">
                     <select
@@ -653,11 +655,11 @@ export function RiskPrediction() {
                       }}
                       className="flex-grow px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
                     >
-                      <option value="">Selecione uma espécie...</option>
+                      <option value="">{t('risk.select_species')}</option>
                       {Object.entries(SPECIES_CATEGORIES).map(([category, speciesList]) => (
-                        <optgroup key={category} label={category}>
+                        <optgroup key={category} label={t(`categories.${category}`)}>
                           {speciesList.map(species => (
-                            <option key={species} value={species}>{species}</option>
+                            <option key={species} value={species}>{t(`categories.${species}`)}</option>
                           ))}
                         </optgroup>
                       ))}
@@ -670,7 +672,7 @@ export function RiskPrediction() {
                       value={customSpecies}
                       onChange={e => setCustomSpecies(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && addCustomSpecies()}
-                      placeholder="Ou digite uma espécie não listada..."
+                      placeholder={t('risk.type_species')}
                       className="flex-grow px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
                     />
                     <button 
@@ -686,7 +688,7 @@ export function RiskPrediction() {
                     <div className="mt-3 flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100">
                       {cultivationData.species.map(species => (
                         <span key={species} className="px-3 py-1 bg-white border border-emerald-200 text-emerald-800 rounded-full text-sm font-medium flex items-center shadow-sm">
-                          {species}
+                          {t(`categories.${species}`)}
                           <button onClick={() => toggleSpecies(species)} className="ml-2 text-emerald-400 hover:text-red-500 transition-colors">
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -698,7 +700,7 @@ export function RiskPrediction() {
 
                 {/* Block 1.5 - Animais na produção */}
                 <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Animais na produção</h4>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('categories.animals')}</h4>
                   
                   <select
                     onChange={(e) => {
@@ -709,9 +711,9 @@ export function RiskPrediction() {
                     }}
                     className="w-full px-3 py-2 mb-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
                   >
-                    <option value="">Selecione um animal...</option>
-                    {ANIMAL_CATEGORIES['Animais na produção'].map(animal => (
-                      <option key={animal} value={animal}>{animal}</option>
+                    <option value="">{t('risk.select_animal') || (language === 'pt' ? 'Selecione um animal...' : 'Select an animal...')}</option>
+                    {ANIMAL_CATEGORIES['animals'].map(animal => (
+                      <option key={animal} value={animal}>{t(`categories.${animal}`)}</option>
                     ))}
                   </select>
 
@@ -719,7 +721,7 @@ export function RiskPrediction() {
                     <div className="mt-2 flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100">
                       {cultivationData.animals.map(animal => (
                         <span key={animal} className="px-3 py-1 bg-white border border-emerald-200 text-emerald-800 rounded-full text-sm font-medium flex items-center shadow-sm">
-                          {animal}
+                          {t(`categories.${animal}`)}
                           <button onClick={() => toggleAnimal(animal)} className="ml-2 text-emerald-400 hover:text-red-500 transition-colors">
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -731,9 +733,9 @@ export function RiskPrediction() {
 
                 {/* Block 2 - Estágio do sistema */}
                 <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">2. Estágio do sistema</h4>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">2. {t('risk.system_stage')}</h4>
                   <div className="flex flex-wrap gap-4">
-                    {['Implantação (0 a 2 anos)', 'Desenvolvimento (2 a 5 anos)', 'Produção (5+ anos)'].map(stage => (
+                    {['implementation_stage', 'development_stage', 'production_stage'].map(stage => (
                       <label key={stage} className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="radio"
@@ -743,7 +745,7 @@ export function RiskPrediction() {
                           onChange={() => setCultivationData(prev => ({ ...prev, stage }))}
                           className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 border-gray-300"
                         />
-                        <span className="text-sm text-gray-700 font-medium">{stage}</span>
+                        <span className="text-sm text-gray-700 font-medium">{t(`common.${stage}`)}</span>
                       </label>
                     ))}
                   </div>
@@ -751,7 +753,7 @@ export function RiskPrediction() {
 
                 {/* Block 3 - O que você está observando */}
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">3. O que você está observando</h4>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">3. {t('risk.what_observing')}</h4>
                   
                   <select
                     onChange={(e) => {
@@ -762,12 +764,12 @@ export function RiskPrediction() {
                     }}
                     className="w-full px-3 py-2 mb-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
                   >
-                    <option value="">Selecione um problema...</option>
-                    <option value="Sem problemas observados">Sem problemas observados</option>
+                    <option value="">{t('risk.select_problem')}</option>
+                    <option value="none">{t('common.none')}</option>
                     {Object.entries(PROBLEM_CATEGORIES).map(([category, problemsList]) => (
-                      <optgroup key={category} label={category}>
+                      <optgroup key={category} label={t(`categories.${category}`)}>
                         {problemsList.map(problem => (
-                          <option key={problem} value={problem}>{problem}</option>
+                          <option key={problem} value={problem}>{t(`categories.${problem}`)}</option>
                         ))}
                       </optgroup>
                     ))}
@@ -777,13 +779,13 @@ export function RiskPrediction() {
                     <div className="mt-2 mb-4 flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100">
                       {cultivationData.problems.map(problem => (
                         <span key={problem} className={`px-3 py-1 bg-white border rounded-full text-sm font-medium flex items-center shadow-sm ${
-                          problem === 'Sem problemas observados' 
+                          problem === 'none' 
                             ? 'border-blue-200 text-blue-800' 
                             : 'border-red-200 text-red-800'
                         }`}>
-                          {problem}
+                          {t(`categories.${problem}`)}
                           <button onClick={() => toggleProblem(problem)} className={`ml-2 transition-colors ${
-                            problem === 'Sem problemas observados' ? 'text-blue-400 hover:text-blue-600' : 'text-red-400 hover:text-red-600'
+                            problem === 'none' ? 'text-blue-400 hover:text-blue-600' : 'text-red-400 hover:text-red-600'
                           }`}>
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -793,11 +795,11 @@ export function RiskPrediction() {
                   )}
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Descreva o que está vendo</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('risk.describe_what_you_see')}</label>
                     <textarea 
                       value={cultivationData.description}
                       onChange={e => setCultivationData(prev => ({ ...prev, description: e.target.value }))}
-                      placeholder="Ex: as folhas do abacate estão amarelando nas bordas desde a última semana de calor"
+                      placeholder={language === 'pt' ? 'Ex: as folhas do abacate estão amarelando nas bordas desde a última semana de calor' : 'Ex: avocado leaves are yellowing at the edges since the last week of heat'}
                       className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none h-20 resize-none text-sm"
                     ></textarea>
                   </div>
@@ -808,74 +810,68 @@ export function RiskPrediction() {
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
                   <Activity className="w-5 h-5 mr-2 text-emerald-600" />
-                  Registro de Bem-Estar Animal
+                  {t('risk.section_bea')}
                 </h3>
                 
                 <div className="space-y-4 mb-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Espécie</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.species') || (language === 'pt' ? 'Espécie' : 'Species')}</label>
                       <select 
                         value={beaForm.species}
                         onChange={e => setBeaForm({...beaForm, species: e.target.value})}
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
                       >
-                        <option>Bovinos leiteiros</option>
-                        <option>Bovinos de corte</option>
-                        <option>Suínos</option>
-                        <option>Aves</option>
-                        <option>Ovinos</option>
-                        <option>Outros</option>
+                        {ANIMAL_CATEGORIES.animals.map(key => (
+                          <option key={key} value={key}>{t(`categories.${key}`)}</option>
+                        ))}
+                        <option value="others">{t('common.others')}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Comportamento</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.behavior') || (language === 'pt' ? 'Comportamento' : 'Behavior')}</label>
                       <select 
                         value={beaForm.behavior}
                         onChange={e => setBeaForm({...beaForm, behavior: e.target.value})}
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
                       >
-                        <option>Normal</option>
-                        <option>Agitado</option>
-                        <option>Letárgico</option>
-                        <option>Ofegante</option>
-                        <option>Isolamento do grupo</option>
+                        {['normal', 'agitated', 'lethargic', 'panting', 'isolation'].map(key => (
+                          <option key={key} value={key}>{t(`common.${key}`)}</option>
+                        ))}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Ocorrências</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.occurrences') || (language === 'pt' ? 'Ocorrências' : 'Occurrences')}</label>
                       <select 
                         value={beaForm.occurrences}
                         onChange={e => setBeaForm({...beaForm, occurrences: e.target.value})}
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
                       >
-                        <option>Nenhuma</option>
-                        <option>Queda de produção</option>
-                        <option>Diarreia</option>
-                        <option>Lesão</option>
-                        <option>Prostração</option>
+                        {['none', 'production_drop', 'diarrhea', 'injury', 'prostration'].map(key => (
+                          <option key={key} value={key}>{t(`common.${key}`)}</option>
+                        ))}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Condição Corporal</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.body_condition') || (language === 'pt' ? 'Condição Corporal' : 'Body Condition')}</label>
                       <select 
                         value={beaForm.body_condition}
                         onChange={e => setBeaForm({...beaForm, body_condition: e.target.value})}
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
                       >
-                        <option>Boa</option>
-                        <option>Regular</option>
-                        <option>Ruim</option>
+                       {['good', 'regular', 'poor'].map(key => (
+                          <option key={key} value={key}>{t(`common.${key}`)}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Observação livre</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('risk.free_observation') || (language === 'pt' ? 'Observação livre' : 'Free observation')}</label>
                     <textarea 
                       value={beaForm.notes}
                       onChange={e => setBeaForm({...beaForm, notes: e.target.value})}
-                      placeholder="O que você observou hoje?"
+                      placeholder={t('risk.observe_today_placeholder') || (language === 'pt' ? 'O que você observou hoje?' : 'What did you observe today?')}
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none h-24 resize-none"
                     ></textarea>
                   </div>
@@ -884,13 +880,13 @@ export function RiskPrediction() {
                     onClick={handleRegisterBEA}
                     className="w-full py-2.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold rounded-lg transition-colors"
                   >
-                    Registrar observação
+                    {t('risk.register_observation') || (language === 'pt' ? 'Registrar observação' : 'Register observation')}
                   </button>
                 </div>
 
                 {beaObservations.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Últimos Registros</h4>
+                    <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">{t('risk.last_records') || (language === 'pt' ? 'Últimos Registros' : 'Last Records')}</h4>
                     <div className="space-y-3">
                       {beaObservations.slice(0, 3).map(obs => (
                         <div key={obs.id} className="p-3 bg-gray-50 rounded-lg border border-gray-100 text-sm relative group">
@@ -902,11 +898,11 @@ export function RiskPrediction() {
                             <Trash2 className="w-4 h-4" />
                           </button>
                           <div className="flex justify-between items-start mb-1 pr-8">
-                            <span className="font-semibold text-gray-900">{obs.animal.species}</span>
-                            <span className="text-gray-500 text-xs">{new Date(obs.date).toLocaleDateString('pt-BR')}</span>
+                            <span className="font-semibold text-gray-900">{t(`categories.${obs.animal.species}`)}</span>
+                            <span className="text-gray-500 text-xs">{new Date(obs.date).toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US')}</span>
                           </div>
                           <div className="text-gray-600">
-                            {obs.animal.behavior} • {obs.animal.occurrences} • {obs.climate_snapshot.temperature_c}°C
+                            {t(`common.${obs.animal.behavior}`)} • {t(`common.${obs.animal.occurrences}`)} • {obs.climate_snapshot.temperature_c}°C
                           </div>
                           {obs.animal.notes && <div className="mt-1 text-gray-500 italic">"{obs.animal.notes}"</div>}
                         </div>
@@ -928,14 +924,14 @@ export function RiskPrediction() {
                   <div className="bg-emerald-100 p-2 rounded-lg mr-3">
                     <Sprout className="w-6 h-6 text-emerald-600" />
                   </div>
-                  Análise Integrada da IA
+                  {t('risk.ai_analysis')}
                 </h3>
                 
                 <div className="relative z-10">
                   {!aiAnalysis && !isAnalyzing ? (
                     <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 text-center border border-emerald-100/50">
                       <p className="text-emerald-800 mb-4 text-sm">
-                        Nossa inteligência artificial cruza os dados climáticos, os alertas científicos e as informações do seu cultivo para gerar recomendações personalizadas.
+                        {t('risk.ai_description')}
                       </p>
                       
                       <div className="flex items-center justify-center gap-4 mb-6 bg-white/50 p-2 rounded-lg border border-emerald-100/50">
@@ -947,7 +943,7 @@ export function RiskPrediction() {
                               : 'text-emerald-700 hover:bg-emerald-100/50'
                           }`}
                         >
-                          Modo Científico
+                          {t('risk.ai_mode_scientific')}
                         </button>
                         <button
                           onClick={() => setAiMode('expanded')}
@@ -957,7 +953,7 @@ export function RiskPrediction() {
                               : 'text-emerald-700 hover:bg-emerald-100/50'
                           }`}
                         >
-                          Modo IA Integrado
+                          {t('risk.ai_mode_integrated')}
                         </button>
                       </div>
 
@@ -966,7 +962,7 @@ export function RiskPrediction() {
                         className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2"
                       >
                         <Activity className="w-5 h-5" />
-                        Gerar Análise Completa
+                        {t('risk.generate_analysis')}
                       </button>
                     </div>
                   ) : isAnalyzing ? (
@@ -975,7 +971,7 @@ export function RiskPrediction() {
                         <div className="absolute inset-0 bg-emerald-200 rounded-full animate-ping opacity-20"></div>
                         <Loader2 className="w-10 h-10 animate-spin text-emerald-600 relative z-10" />
                       </div>
-                      <p className="mt-4 text-emerald-800 font-medium animate-pulse">Processando dados climáticos e referências científicas...</p>
+                      <p className="mt-4 text-emerald-800 font-medium animate-pulse">{t('risk.ai_processing')}</p>
                     </div>
                   ) : (
                     <div className="bg-white/80 backdrop-blur-md rounded-xl p-6 border border-emerald-100 shadow-sm">
@@ -1005,7 +1001,7 @@ export function RiskPrediction() {
                         <div className="mt-8 pt-6 border-t border-emerald-100">
                           <h3 className="text-lg font-bold text-emerald-900 flex items-center mb-4">
                             <AlertTriangle className="w-5 h-5 mr-2 text-amber-600" />
-                            Alertas Científicos Baseados na Sua Seleção
+                            {t('risk.scientific_alerts')}
                           </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {riskReport.evidence_based_alerts.map((alert, idx) => {
@@ -1023,7 +1019,7 @@ export function RiskPrediction() {
                                   </div>
                                   
                                   <div className="mt-2 bg-white/50 rounded-xl p-3">
-                                    <span className="text-xs font-bold opacity-80 uppercase tracking-wider block mb-2">Ações Recomendadas:</span>
+                                    <span className="text-xs font-bold opacity-80 uppercase tracking-wider block mb-2">{t('risk.recommended_actions')}</span>
                                     <ul className="list-disc list-inside text-sm space-y-1.5">
                                       {formatted.actions.map((action, i) => (
                                         <li key={i} className="leading-snug">{action}</li>
@@ -1034,7 +1030,7 @@ export function RiskPrediction() {
                                   <div className="mt-auto pt-3 border-t border-current border-opacity-10">
                                     <p className="text-xs opacity-80 flex items-start">
                                       <Info className="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
-                                      <span>Referência: {formatted.citation_badge}</span>
+                                      <span>{t('risk.reference')}: {formatted.citation_badge}</span>
                                     </p>
                                   </div>
                                 </div>
@@ -1050,7 +1046,7 @@ export function RiskPrediction() {
                           className="text-sm px-4 py-2 bg-emerald-50 text-emerald-700 font-medium rounded-lg hover:bg-emerald-100 transition-colors flex items-center gap-2"
                         >
                           <Activity className="w-4 h-4" />
-                          Atualizar Análise
+                          {t('risk.refresh_analysis')}
                         </button>
                       </div>
                     </div>

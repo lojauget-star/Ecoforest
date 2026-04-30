@@ -1,25 +1,18 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useI18n } from '../i18n';
 import type { AppView } from '../App';
+import { 
+    LayoutGrid, 
+    Users, 
+    AlertTriangle, 
+} from 'lucide-react';
 
-const BrotaLogo = () => (
-    <svg className="h-9 w-9 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+const BrotaLogo = ({ className = "h-8 w-8 text-emerald-600" }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 20v-10" />
         <path d="M12 10a4 4 0 1 0-8 0c0 2.4 1.9 4.3 3.5 5" />
         <path d="M12 10a4 4 0 1 1 8 0c0 2.4-1.9 4.3-3.5 5" />
-    </svg>
-);
-
-const MenuIcon = () => (
-    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-);
-
-const CloseIcon = () => (
-     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
     </svg>
 );
 
@@ -30,91 +23,92 @@ interface NavbarProps {
 
 export function Navbar({ currentView, onViewChange }: NavbarProps) {
     const { t, language, changeLanguage } = useI18n();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const navButtonStyle = "px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200";
-    const activeNavStyle = "bg-gray-100 text-emerald-600 font-semibold";
-    const inactiveNavStyle = "text-gray-500 hover:text-gray-900 hover:bg-gray-100/50";
+    const bottomNavItemStyle = "flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 relative";
+    const bottomNavIconStyle = "w-6 h-6 mb-1";
+    const bottomNavTextStyle = "text-[10px] font-bold uppercase tracking-wider";
 
-    const langButtonStyle = "px-3 py-1 text-sm font-semibold rounded-md transition-all";
-    const activeLangStyle = "bg-white text-emerald-700 shadow-sm";
-    const inactiveLangStyle = "text-gray-500 hover:text-gray-900";
+    const langButtonStyle = "px-2 py-1 text-xs font-bold rounded flex items-center justify-center transition-all min-w-[28px] h-[28px]";
+    const activeLangStyle = "bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-600";
+    const inactiveLangStyle = "bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700";
     
     const handleViewChange = (view: AppView) => {
         onViewChange(view);
-        setIsMenuOpen(false); // Close menu on navigation
     };
 
-    const navLinks = (
-        <>
-            <button onClick={() => handleViewChange('planner')} className={`${navButtonStyle} ${currentView === 'planner' ? activeNavStyle : inactiveNavStyle}`} aria-pressed={currentView === 'planner'}>
-                {t('header.planner')}
-            </button>
-            <button onClick={() => handleViewChange('producers')} className={`${navButtonStyle} ${currentView === 'producers' ? activeNavStyle : inactiveNavStyle}`} aria-pressed={currentView === 'producers'}>
-                {t('header.producers')}
-            </button>
-            <button onClick={() => handleViewChange('risk')} className={`${navButtonStyle} ${currentView === 'risk' ? activeNavStyle : inactiveNavStyle}`} aria-pressed={currentView === 'risk'}>
-                {t('header.risk')}
-            </button>
-        </>
-    );
-
     const languageSwitcher = (
-         <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
-            <button onClick={() => changeLanguage('pt')} className={`${langButtonStyle} ${language === 'pt' ? activeLangStyle : inactiveLangStyle}`}>PT</button>
-            <button onClick={() => changeLanguage('en')} className={`${langButtonStyle} ${language === 'en' ? activeLangStyle : inactiveLangStyle}`}>EN</button>
+         <div className="flex items-center space-x-1.5 p-1 bg-gray-50 rounded-lg border border-gray-100">
+            <button 
+                onClick={() => changeLanguage('pt')} 
+                className={`${langButtonStyle} ${language === 'pt' ? activeLangStyle : inactiveLangStyle}`}
+                title="Português"
+            >
+                PT
+            </button>
+            <button 
+                onClick={() => changeLanguage('en')} 
+                className={`${langButtonStyle} ${language === 'en' ? activeLangStyle : inactiveLangStyle}`}
+                title="English"
+            >
+                EN
+            </button>
+            <button 
+                onClick={() => changeLanguage('de')} 
+                className={`${langButtonStyle} ${language === 'de' ? activeLangStyle : inactiveLangStyle}`}
+                title="Deutsch"
+            >
+                DE
+            </button>
         </div>
     );
 
     return (
         <>
-            <header className="bg-white/80 backdrop-blur-md fixed top-4 left-1/2 -translate-x-1/2 z-30 rounded-full shadow-md border border-gray-200/80 w-[95%] max-w-screen-2xl">
-                <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        {/* Logo and Title */}
-                        <div className="flex items-center space-x-3">
-                            <BrotaLogo />
-                            <h1 className="text-2xl font-bold text-gray-900">{t('header.title')}</h1>
-                        </div>
-
-                        {/* Desktop Navigation */}
-                        <div className="hidden lg:flex items-center justify-center space-x-2">
-                           {navLinks}
-                        </div>
-
-                        {/* Right side icons & Mobile Menu Button */}
-                        <div className="flex items-center space-x-4">
-                           <div className="hidden lg:block">{languageSwitcher}</div>
-                             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden p-2 rounded-md text-gray-500 hover:text-gray-900" aria-label={t('navbar.open_menu')}>
-                                <MenuIcon />
-                            </button>
+            {/* Top Header - Compact for logo and language */}
+            <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 h-14 flex items-center">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-between items-center">
+                    <div className="flex items-center space-x-2 cursor-pointer" onClick={() => handleViewChange('planner')}>
+                        <BrotaLogo className="h-6 w-6 text-emerald-600" />
+                        <div className="flex flex-col">
+                            <span className="text-sm font-black text-gray-900 leading-none">BROTA</span>
+                            <span className="text-[8px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5">Agrofloresta</span>
                         </div>
                     </div>
+                    {languageSwitcher}
                 </div>
             </header>
 
-            {/* Mobile Menu */}
-            {isMenuOpen && (
-                <div className="lg:hidden fixed inset-0 bg-white/95 backdrop-blur-md z-50 animate-fade-in" role="dialog" aria-modal="true">
-                     <div className="flex justify-between items-center h-20 px-4 border-b border-gray-200">
-                        <div className="flex items-center space-x-3">
-                            <BrotaLogo />
-                            <h1 className="text-2xl font-bold text-gray-900">{t('header.title')}</h1>
-                        </div>
-                         <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-md text-gray-500 hover:text-gray-900">
-                            <CloseIcon />
-                        </button>
-                    </div>
-                    <nav className="flex flex-col items-center space-y-8 p-8 mt-10">
-                        <div className="flex flex-col items-center space-y-6">
-                            {navLinks}
-                        </div>
-                        <div className="pt-8">
-                           {languageSwitcher}
-                        </div>
-                    </nav>
+            {/* Bottom/Footer Navigation */}
+            <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 px-2 pb-safe-area-inset-bottom sm:pb-0 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] selection:bg-emerald-100">
+                <div className="max-w-md mx-auto flex items-center justify-around h-16">
+                    <button 
+                        onClick={() => handleViewChange('planner')}
+                        className={`${bottomNavItemStyle} ${currentView === 'planner' ? 'text-emerald-600' : 'text-gray-400'}`}
+                    >
+                        <LayoutGrid className={bottomNavIconStyle} />
+                        <span className={bottomNavTextStyle}>{t('header.planner')}</span>
+                        {currentView === 'planner' && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-emerald-600 rounded-full" />}
+                    </button>
+
+                    <button 
+                        onClick={() => handleViewChange('producers')}
+                        className={`${bottomNavItemStyle} ${currentView === 'producers' ? 'text-emerald-600' : 'text-gray-400'}`}
+                    >
+                        <Users className={bottomNavIconStyle} />
+                        <span className={bottomNavTextStyle}>{t('header.producers')}</span>
+                        {currentView === 'producers' && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-emerald-600 rounded-full" />}
+                    </button>
+
+                    <button 
+                        onClick={() => handleViewChange('risk')}
+                        className={`${bottomNavItemStyle} ${currentView === 'risk' ? 'text-emerald-600' : 'text-gray-400'}`}
+                    >
+                        <AlertTriangle className={bottomNavIconStyle} />
+                        <span className={bottomNavTextStyle}>{t('header.risk')}</span>
+                        {currentView === 'risk' && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-emerald-600 rounded-full" />}
+                    </button>
                 </div>
-            )}
+            </nav>
         </>
     );
 }

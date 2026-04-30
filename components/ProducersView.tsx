@@ -242,7 +242,7 @@ function QuizModal({ onClose }: { onClose: () => void }) {
         setStep('loading');
         setError('');
         try {
-            const result = await getSustainabilityTips(answers, language);
+            const result = await getSustainabilityTips(answers, language as any);
             setTips(result);
             setStep('results');
         } catch (err) {

@@ -50,7 +50,7 @@ const planResponseSchema = {
   required: ["plan_id", "map_layers", "succession_schedule", "explanations", "confidence_score", "references"]
 };
 
-export async function getAgroforestryPlan(request: PlanRequest, language: 'pt' | 'en'): Promise<PlanResponse> {
+export async function getAgroforestryPlan(request: PlanRequest, language: 'pt' | 'en' | 'de'): Promise<PlanResponse> {
   const { systemInstruction, userPromptTemplate, preferredSpeciesTextTemplate, dataSourceTextTemplate, wfoSpeciesTextTemplate } = prompts[language].planner;
   
   let wfoSpeciesText = '';
@@ -266,7 +266,7 @@ export async function analyzeVulnerability(request: VulnerabilityAnalysisRequest
     }
 }
 
-export async function getSustainabilityTips(answers: QuizAnswers, language: 'pt' | 'en'): Promise<string> {
+export async function getSustainabilityTips(answers: QuizAnswers, language: 'pt' | 'en' | 'de'): Promise<string> {
     const { systemInstruction, userPromptTemplate } = prompts[language].quiz;
     const answersText = Object.entries(answers).map(([k, v]) => `${k}: ${v}`).join('\n');
     
@@ -279,7 +279,7 @@ export async function getSustainabilityTips(answers: QuizAnswers, language: 'pt'
     return response.text || '';
 }
 
-export async function getRiskPrediction(request: RiskPredictionRequest, language: 'pt' | 'en'): Promise<RiskPredictionResponse> {
+export async function getRiskPrediction(request: RiskPredictionRequest, language: 'pt' | 'en' | 'de'): Promise<RiskPredictionResponse> {
     const { systemInstruction, userPromptTemplate } = prompts[language].risk;
     
     const weatherSummary = request.climateSummary || "Dados climáticos não disponíveis.";
