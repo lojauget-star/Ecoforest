@@ -61,8 +61,8 @@ export function Navbar({ currentView, onViewChange }: NavbarProps) {
                             <BrotaLogo className="h-4 w-4" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-sm font-black text-gray-900 leading-none tracking-tight font-display">BROTA</span>
-                            <span className="text-[7px] font-black text-emerald-600 uppercase tracking-[0.2em] leading-none mt-0.5 opacity-80">Agrofloresta</span>
+                            <span className="text-sm font-black text-gray-900 leading-none tracking-tight font-display">{t('header.title').toUpperCase()}</span>
+                            <span className="text-[7px] font-black text-emerald-600 uppercase tracking-[0.2em] leading-none mt-0.5 opacity-80">{t('header.subtitle')}</span>
                         </div>
                     </div>
                     
@@ -79,40 +79,47 @@ export function Navbar({ currentView, onViewChange }: NavbarProps) {
             </header>
 
             {/* Bottom Fixed Nav - Modern docked pill */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-6 px-6 pointer-events-none">
-                <nav className="glass-card w-full max-w-sm h-16 rounded-2xl px-4 shadow-[0_-5px_30px_rgba(0,0,0,0.1)] flex items-center justify-around pointer-events-auto ring-1 ring-white/30 backdrop-blur-3xl bg-white/85">
+            <div 
+                className="fixed bottom-0 left-0 right-0 z-50 flex justify-center px-4 sm:px-6 pointer-events-none"
+                style={{ paddingBottom: `calc(24px + env(safe-area-inset-bottom))` }}
+            >
+                <nav className="glass-card w-full max-w-md h-16 rounded-[1.25rem] px-4 shadow-[0_-10px_40px_rgba(0,0,0,0.12)] border-t border-white/40 flex items-center justify-around pointer-events-auto ring-1 ring-white/30 backdrop-blur-3xl bg-white/90">
                     {[
                         { id: 'planner', icon: LayoutGrid, label: 'header.planner' },
                         { id: 'producers', icon: Users, label: 'header.producers' },
                         { id: 'risk', icon: AlertTriangle, label: 'header.risk' }
-                    ].map((item) => (
-                        <button 
-                            key={item.id}
-                            onClick={() => handleViewChange(item.id as AppView)}
-                            className={`${bottomNavItemStyle} ${currentView === item.id ? 'text-emerald-700' : 'text-gray-400 hover:text-emerald-500'}`}
-                        >
-                            <div className="relative mb-1">
-                                <item.icon className={bottomNavIconStyle} strokeWidth={currentView === item.id ? 2.5 : 2} />
-                                {currentView === item.id && (
-                                    <motion.div 
-                                        layoutId="iconHighlight"
-                                        className="absolute -inset-2.5 bg-emerald-500/10 rounded-full blur-md"
-                                    />
-                                )}
-                            </div>
-                            <span className={`${bottomNavTextStyle} ${currentView === item.id ? 'opacity-100' : 'opacity-60 font-black'}`}>
-                                {t(item.label)}
-                            </span>
-                            
-                            {currentView === item.id && (
-                                <motion.div 
-                                    layoutId="navIndicator"
-                                    className="absolute -bottom-1.5 w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_12px_rgba(16,185,129,1)]"
-                                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                />
-                            )}
-                        </button>
-                    ))}
+                    ].map((item) => {
+                        const isActive = currentView === item.id;
+                        return (
+                            <button 
+                                key={item.id}
+                                onClick={() => handleViewChange(item.id as AppView)}
+                                className={`${bottomNavItemStyle} ${isActive ? 'text-emerald-700' : 'text-gray-400 hover:text-emerald-500'}`}
+                            >
+                                <div className="relative flex flex-col items-center">
+                                    {isActive && (
+                                        <motion.div 
+                                            layoutId="pillHighlight"
+                                            className="absolute -inset-x-4 -inset-y-1 bg-emerald-500/10 rounded-xl"
+                                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                                        />
+                                    )}
+                                    <item.icon className={`${bottomNavIconStyle} ${isActive ? 'scale-110' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
+                                    <span className={`${bottomNavTextStyle} ${isActive ? 'opacity-100 font-black' : 'opacity-60 font-bold'}`}>
+                                        {t(item.label)}
+                                    </span>
+                                    
+                                    {isActive && (
+                                        <motion.div 
+                                            layoutId="navIndicator"
+                                            className="absolute -bottom-1.5 w-8 h-1 bg-emerald-500 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.8)]"
+                                            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                        />
+                                    )}
+                                </div>
+                            </button>
+                        );
+                    })}
                 </nav>
             </div>
             

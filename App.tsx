@@ -111,7 +111,10 @@ export default function App() {
   return (
     <div className="min-h-screen bg-transparent font-sans flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
       <Navbar currentView={view} onViewChange={setView} />
-      <main className="flex-grow p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pt-20 sm:pt-24 lg:pt-28 pb-32 animate-fade-in">
+      <main 
+        className="flex-grow p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pt-0 sm:pt-16 lg:pt-24 pb-32 sm:pb-36 animate-fade-in"
+        style={{ paddingBottom: `calc(90px + env(safe-area-inset-bottom))` }}
+      >
         {view === 'planner' ? (
            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
              <div className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 lg:z-30">

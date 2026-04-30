@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import type { PlanRequest } from '../types';
 import { useI18n } from '../i18n';
-import { Loader2 } from 'lucide-react';
+import { Loader2, HelpCircle, ExternalLink, Apple, Leaf, Trees, Carrot, Info, X } from 'lucide-react';
 
 interface PlanningFormProps {
   requestData: Partial<PlanRequest>;
@@ -45,6 +45,11 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
   const animalTypeOptions = ["none", "cattle_dairy", "cattle_beef", "sheep", "poultry", "swine"];
   const animalWelfareOptions = ["shade", "windbreak", "forage", "predator_protection"];
   const [speciesInput, setSpeciesInput] = useState('');
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
+
+  const isObjectiveSelected = (requestData.objectives || []).length > 0;
+  const hasArea = !!requestData.area_geojson;
+  const canGenerate = hasArea && isObjectiveSelected;
 
   const handleObjectiveChange = (objective: string) => {
     const currentObjectives = requestData.objectives || [];
@@ -84,9 +89,34 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
   };
   
   return (
-    <div className="space-y-12">
-      <div className="pt-2 sm:pt-4">
-        <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight font-display mb-2">{t('form.title1')}</h2>
+    <div className="space-y-12 animate-fade-in">
+      {showDisclaimer && (
+          <div className="bg-blue-50 border border-blue-100 p-4 rounded-2xl flex items-start gap-4 relative animate-fade-in shadow-sm">
+              <div className="p-2 bg-blue-100 text-blue-600 rounded-xl flex-shrink-0">
+                  <Info className="w-5 h-5" />
+              </div>
+              <div className="pr-8">
+                  <p className="text-xs font-bold text-blue-900 mb-1">{t('disclaimer.title')}</p>
+                  <p className="text-[10px] text-blue-700/80 leading-relaxed font-medium">
+                      {t('disclaimer.p1')} {t('disclaimer.p2')}
+                  </p>
+              </div>
+              <button 
+                  onClick={() => setShowDisclaimer(false)}
+                  className="absolute top-4 right-4 p-1 text-blue-400 hover:text-blue-600 transition-colors"
+              >
+                  <X className="w-4 h-4" />
+              </button>
+          </div>
+      )}
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight font-display leading-none uppercase">{t('form.title1')}</h2>
+            <div className="bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{t('form.step').replace('{current}', '1').replace('{total}', '2')}</span>
+            </div>
+        </div>
         <div className="h-1.5 w-12 bg-emerald-500 rounded-full mb-4"></div>
         <p className="text-gray-500 font-medium">{t('form.subtitle1')}</p>
       </div>
@@ -96,7 +126,7 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
           <Label>{t('form.area_label')}</Label>
           <div className="w-full px-5 py-4 bg-emerald-50/50 border border-emerald-100 rounded-[1.25rem] shadow-inner flex items-center justify-between">
             <span className="text-emerald-700 font-black text-lg font-mono">{requestData.area_ha?.toFixed(3) || '0.000'}</span>
-            <span className="text-emerald-600 font-black text-[10px] uppercase tracking-widest">Hectares</span>
+            <span className="text-emerald-600 font-black text-[10px] uppercase tracking-widest">{t('form.hectares')}</span>
           </div>
           <p className="text-[10px] text-gray-400 font-medium mt-2">{t('form.area_note')}</p>
         </div>
@@ -124,18 +154,24 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
 
         <div>
           <Label>{t('form.objectives_label')}</Label>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {objectivesOptions.map(obj => (
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            {[
+                { id: 'frutas', icon: <Apple className="w-4 h-4" /> },
+                { id: 'biomassa', icon: <Leaf className="w-4 h-4" /> },
+                { id: 'madeira', icon: <Trees className="w-4 h-4" /> },
+                { id: 'hortalicas', icon: <Carrot className="w-4 h-4" /> }
+            ].map(({ id, icon }) => (
               <button 
-                key={obj}
-                onClick={() => handleObjectiveChange(obj)}
-                className={`px-4 py-2 text-xs font-black uppercase tracking-widest rounded-full transition-all duration-300 active:scale-95 border ${
-                  requestData.objectives?.includes(obj)
+                key={id}
+                onClick={() => handleObjectiveChange(id)}
+                className={`flex items-center gap-3 p-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 active:scale-95 border ${
+                  requestData.objectives?.includes(id)
                     ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
                     : 'bg-white text-gray-400 border-gray-100 hover:border-emerald-200 hover:text-emerald-600'
                 }`}
               >
-                {t(`form.objectives_options.${obj}`)}
+                {icon}
+                {t(`form.objectives_options.${id}`)}
               </button>
             ))}
           </div>
@@ -208,37 +244,75 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
         </div>
         
         <div>
-            <Label htmlFor="data_source_link">{t('form.data_source_label')}</Label>
-            <Input 
-                id="data_source_link"
-                type="url"
-                value={requestData.data_source_link || ''}
-                onChange={e => updateRequestData({ data_source_link: e.target.value })}
-                placeholder={t('form.data_source_placeholder')}
-            />
+            <div className="flex items-center gap-2 mb-2">
+                <Label htmlFor="data_source_link" className="mb-0">{t('form.data_source_label')}</Label>
+                <div className="group relative">
+                    <HelpCircle className="w-3.5 h-3.5 text-gray-300 cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-gray-900 text-white text-[9px] font-medium rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
+                        {t('form.formats_accepted')}
+                    </div>
+                </div>
+            </div>
+            <div className="flex gap-3">
+                <Input 
+                    id="data_source_link"
+                    type="url"
+                    value={requestData.data_source_link || ''}
+                    onChange={e => updateRequestData({ data_source_link: e.target.value })}
+                    placeholder={t('form.data_source_placeholder')}
+                />
+                <button 
+                    type="button"
+                    onClick={() => updateRequestData({ data_source_link: 'https://www.infoteca.cnptia.embrapa.br/' })}
+                    className="px-4 py-4 bg-gray-50 text-gray-400 rounded-[1.25rem] border border-gray-100 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95 transition-all outline-none"
+                    title="Ver exemplo"
+                >
+                    <ExternalLink className="w-5 h-5" />
+                </button>
+            </div>
              <p className="text-[10px] text-gray-400 font-medium mt-2 leading-relaxed">{t('form.data_source_note')}</p>
         </div>
       </div>
 
       <div className="pt-4">
-        <h2 className="text-3xl font-black text-gray-900 tracking-tight font-display">{t('form.title2')}</h2>
+        <div className="flex items-center justify-between mb-2">
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight font-display leading-none uppercase">{t('form.title2')}</h2>
+            <div className="bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{t('form.step').replace('{current}', '2').replace('{total}', '2')}</span>
+            </div>
+        </div>
         <p className="text-sm text-gray-500 font-medium mt-1">{t('form.subtitle2')}</p>
       </div>
 
-      <button
-        onClick={onPlanRequest}
-        disabled={isLoading || !requestData.area_geojson}
-        className="w-full bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] py-5 px-6 rounded-[1.5rem] transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 shadow-[0_10px_30px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_40px_rgba(16,185,129,0.4)] active:scale-[0.98] mt-6"
-      >
-        {isLoading ? (
-            <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>{t('form.button_loading')}</span>
-            </>
-        ) : (
-          <span>{t('form.button_generate')}</span>
+      <div className="space-y-4">
+        <button
+            onClick={onPlanRequest}
+            disabled={isLoading || !canGenerate}
+            className={`w-full py-5 px-6 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] transition-all duration-300 ease-in-out flex items-center justify-center space-x-3 active:scale-[0.98] ${
+                isLoading || !canGenerate
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                : 'bg-emerald-600 text-white shadow-[0_10px_30px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_40px_rgba(16,185,129,0.4)]'
+            }`}
+        >
+            {isLoading ? (
+                <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>{t('form.button_loading')}</span>
+                </>
+            ) : (
+            <span>{t('form.button_generate')}</span>
+            )}
+        </button>
+
+        {!canGenerate && !isLoading && (
+            <div className="flex items-center gap-3 px-4 py-3 bg-amber-50 text-amber-700 rounded-xl border border-amber-100 animate-pulse-slow">
+                <Info className="w-4 h-4 flex-shrink-0" />
+                <p className="text-[10px] font-black uppercase tracking-wider">
+                    {!hasArea ? t('form.draw_area_first') : !isObjectiveSelected ? t('form.select_objective_first') : ''}
+                </p>
+            </div>
         )}
-      </button>
+      </div>
     </div>
   );
 }
