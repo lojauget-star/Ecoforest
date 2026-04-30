@@ -372,53 +372,55 @@ export function RiskPrediction() {
   if (locationMode === 'select') {
     return (
       <div className="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
-          <MapPin className="w-12 h-12 text-emerald-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('risk.title')}?</h2>
-          <p className="text-gray-600 mb-8">{t('risk.description')}</p>
+        <div className="glass-card rounded-[2.5rem] p-10 text-center shadow-futuristic border border-white/60">
+          <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <MapPin className="w-8 h-8" />
+          </div>
+          <h2 className="text-3xl font-black text-gray-900 mb-3 tracking-tight font-display">{t('risk.title')}?</h2>
+          <p className="text-gray-500 font-medium mb-8 max-w-sm mx-auto leading-relaxed">{t('risk.description')}</p>
           
-          <div className="space-y-4">
+          <div className="space-y-6">
             <button
               onClick={handleUseMyLocation}
               disabled={isLocating}
-              className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center disabled:opacity-50"
+              className="w-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all flex items-center justify-center disabled:opacity-50 shadow-[0_4px_20px_rgba(16,185,129,0.3)] active:scale-[0.98]"
             >
-              {isLocating ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <MapPin className="w-5 h-5 mr-2" />}
+              {isLocating ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <MapPin className="w-5 h-5 mr-3" />}
               {t('risk.use_my_location')}
             </button>
             
-            {locationError && <p className="text-sm text-red-600">{locationError}</p>}
+            {locationError && <p className="text-sm text-red-500 font-medium animate-shake">{locationError}</p>}
             
-            <div className="relative flex items-center py-2">
-              <div className="flex-grow border-t border-gray-200"></div>
-              <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">{t('risk.search_manually')}</span>
-              <div className="flex-grow border-t border-gray-200"></div>
+            <div className="relative flex items-center py-4">
+              <div className="flex-grow border-t border-gray-200/50"></div>
+              <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-bold uppercase tracking-[0.2em]">{t('risk.search_manually')}</span>
+              <div className="flex-grow border-t border-gray-200/50"></div>
             </div>
             
-            <div className="relative text-left">
+            <div className="relative text-left group">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-600 transition-colors" />
                 <input
                   type="text"
                   placeholder={t('risk.location_label')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-transparent focus:bg-white rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none font-medium text-gray-700 shadow-inner"
                 />
-                {isSearching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 animate-spin" />}
+                {isSearching && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500 animate-spin" />}
               </div>
               
               {searchResults.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                <div className="absolute z-10 w-full mt-3 bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-2xl overflow-hidden animate-fade-in translate-y-0 border-t-0 p-2">
                   {searchResults.map((result) => (
                     <button
                       key={result.id}
                       onClick={() => handleSelectLocation(result)}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                      className="w-full text-left px-5 py-4 hover:bg-emerald-50 rounded-2xl transition-colors mb-1 last:mb-0 group/item"
                     >
-                      <div className="font-medium text-gray-900">{result.name}</div>
-                      <div className="text-sm text-gray-500">
-                        {result.admin1 ? `${result.admin1}, ` : ''}{result.country || ''} ({result.latitude.toFixed(4)}, {result.longitude.toFixed(4)})
+                      <div className="font-bold text-gray-900 group-hover/item:text-emerald-700">{result.name}</div>
+                      <div className="text-xs text-gray-400 font-medium mt-0.5">
+                        {result.admin1 ? `${result.admin1}, ` : ''}{result.country || ''} • {result.latitude.toFixed(3)}, {result.longitude.toFixed(3)}
                       </div>
                     </button>
                   ))}
@@ -434,17 +436,19 @@ export function RiskPrediction() {
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-white/20">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('risk.title')}</h1>
-          <div className="flex items-center text-gray-500 mt-1">
-            <MapPin className="w-4 h-4 mr-1" />
-            <span>{selectedLocation?.name} ({selectedLocation?.lat.toFixed(4)}, {selectedLocation?.lng.toFixed(4)})</span>
+          <h1 className="text-4xl font-black text-gray-900 tracking-tight font-display">{t('risk.title')}</h1>
+          <div className="flex items-center text-gray-500 mt-2 text-sm font-medium">
+            <div className="bg-emerald-50 text-emerald-600 p-1.5 rounded-lg mr-2">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <span>{selectedLocation?.name} ({selectedLocation?.lat.toFixed(3)}, {selectedLocation?.lng.toFixed(3)})</span>
             <button 
               onClick={() => setLocationMode('select')}
-              className="ml-3 text-emerald-600 hover:text-emerald-700 text-sm font-medium flex items-center"
+              className="ml-4 px-3 py-1 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-full text-xs font-bold transition-all active:scale-95 flex items-center"
             >
-              <Edit2 className="w-3 h-3 mr-1" /> {t('risk.change_location')}
+              <Edit2 className="w-3 h-3 mr-1.5" /> {t('risk.change_location')}
             </button>
           </div>
         </div>
@@ -459,161 +463,175 @@ export function RiskPrediction() {
 
 
           {/* Clima e Previsão */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-900 flex items-center">
-              <CloudLightning className="w-6 h-6 mr-2 text-emerald-600" />
+          <div className="space-y-6">
+            <h2 className="text-3xl font-black text-gray-900 flex items-center tracking-tight font-display">
+              <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mr-4 shadow-sm">
+                <CloudLightning className="w-7 h-7" />
+              </div>
               {t('risk.forecast_7days')}
             </h2>
             
             {/* Current Condition Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-              <div className="p-3 bg-orange-50 text-orange-600 rounded-full">
-                <Thermometer className="w-6 h-6" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="glass-card p-6 rounded-[2.5rem] flex items-center gap-6 group hover:shadow-2xl transition-all">
+                <div className="p-4 bg-orange-50 text-orange-600 rounded-[1.5rem] group-hover:scale-110 transition-transform shadow-inner">
+                  <Thermometer className="w-8 h-8" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1.5">{t('risk.temperature')}</p>
+                  <div className="flex items-baseline gap-1.5">
+                    <p className="text-4xl font-black text-gray-900 font-display tracking-tight">{climateData.current.temperature_c}°</p>
+                    <span className="text-sm font-black text-gray-400">C</span>
+                  </div>
+                  <div className="flex items-center mt-1">
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{t('risk.feels_like')}</span>
+                    <span className="ml-1.5 text-xs font-black text-gray-600">{climateData.current.feels_like_c}°C</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-500 font-medium">{t('risk.temperature')}</p>
-                <p className="text-2xl font-bold text-gray-900">{climateData.current.temperature_c}°C</p>
-                <p className="text-xs text-gray-400">{t('risk.feels_like')}: {climateData.current.feels_like_c}°C</p>
-              </div>
-            </div>
-            
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-full">
-                <Droplets className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 font-medium">{t('risk.humidity')}</p>
-                <p className="text-2xl font-bold text-gray-900">{climateData.current.humidity_percent}%</p>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-              <div className="p-3 bg-cyan-50 text-cyan-600 rounded-full">
-                <CloudRain className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 font-medium">{t('risk.precipitation')}</p>
-                <p className="text-2xl font-bold text-gray-900">{climateData.current.precipitation_mm}mm</p>
-                {(() => {
-                  const dryDays = climateData.forecast_7days.filter(d => d.drought_risk).length;
-                  return dryDays >= 3 ? <p className="text-xs text-amber-600 font-medium">{dryDays} {t('risk.days_without_rain')}</p> : null;
-                })()}
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-              <div className="p-3 bg-purple-50 text-purple-600 rounded-full">
-                <Sun className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 font-medium">{t('risk.uv_index')}</p>
-                <p className="text-2xl font-bold text-gray-900">{climateData.current.uv_index}</p>
-                <p className={`text-xs font-medium ${getUVClassification(climateData.current.uv_index).color}`}>
-                  {getUVClassification(climateData.current.uv_index).text}
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-              <div className="p-3 bg-amber-50 text-amber-700 rounded-full">
-                <Thermometer className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 font-medium">{t('risk.soil_temp')}</p>
-                <p className="text-2xl font-bold text-gray-900">{climateData.current.soil_temperature_c ?? '--'}°C</p>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-              <div className="p-3 bg-emerald-50 text-emerald-700 rounded-full">
-                <Droplets className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 font-medium">{t('risk.soil_moisture')}</p>
-                <p className="text-2xl font-bold text-gray-900">{climateData.current.soil_moisture_percent ?? '--'}%</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              {/* 7-day Forecast */}
-              <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 overflow-x-auto">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                  <Calendar className="w-5 h-5 mr-2 text-emerald-600" />
-                  {t('risk.forecast_7days')}
-                </h3>
-                <div className="flex gap-4 min-w-max">
-                  {climateData.forecast_7days.map((day, i) => {
-                    const dateObj = new Date(day.date + 'T12:00:00');
-                    const dayName = dateObj.toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US', { weekday: 'short' }).replace('.', '');
-                    
-                    let barColor = 'bg-gray-200';
-                    if (day.frost_risk) barColor = 'bg-purple-500';
-                    else if (day.heat_stress_risk) barColor = 'bg-amber-500';
-                    else if (day.precipitation_mm > 5) barColor = 'bg-blue-400';
-
-                    return (
-                      <div key={i} className="flex flex-col items-center p-3 rounded-xl border border-gray-100 bg-gray-50 w-24 flex-shrink-0">
-                        <span className="text-sm font-medium text-gray-500 capitalize mb-2">{dayName}</span>
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-lg font-bold text-gray-900">{Math.round(day.temp_max_c)}°</span>
-                          <span className="text-sm font-medium text-gray-400">{Math.round(day.temp_min_c)}°</span>
-                        </div>
-                        <div className="flex items-center text-xs text-blue-600 font-medium mb-3">
-                          <Droplets className="w-3 h-3 mr-1" />
-                          {day.precipitation_mm}mm
-                        </div>
-                        <div className={`w-full h-1.5 rounded-full ${barColor}`}></div>
-                      </div>
-                    );
-                  })}
+              
+              <div className="glass-card p-6 rounded-[2.5rem] flex items-center gap-6 group hover:shadow-2xl transition-all">
+                <div className="p-4 bg-blue-50 text-blue-600 rounded-[1.5rem] group-hover:scale-110 transition-transform shadow-inner">
+                  <Droplets className="w-8 h-8" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1.5">{t('risk.humidity')}</p>
+                  <div className="flex items-baseline gap-1.5">
+                    <p className="text-4xl font-black text-gray-900 font-display tracking-tight">{climateData.current.humidity_percent}</p>
+                    <span className="text-sm font-black text-gray-400">%</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">
-                  {climateData.historical?.source === 'open-meteo' 
-                    ? t('risk.historical_source_satellite') 
-                    : t('risk.historical_source_official')}
-                </h3>
-                
-                {climateData.historical ? (
-                  <>
-                    <p className="text-sm text-gray-500 mb-4">
-                      {climateData.historical.source === 'open-meteo' 
-                        ? t('risk.historical_satellite_desc') 
-                        : t('risk.historical_station_desc')
-                           .replace('{name}', climateData.historical.station_name)
-                           .replace('{distance}', climateData.historical.distance_km.toString())
-                           .replace('{period}', climateData.historical.period)}
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-white p-3 rounded-xl border border-gray-100">
-                        <p className="text-xs text-gray-500 font-medium">{t('risk.avg_temp')}</p>
-                        <p className="text-lg font-bold text-gray-900">{climateData.historical.avg_temp_c}°C</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-xl border border-gray-100">
-                        <p className="text-xs text-gray-500 font-medium">{t('risk.annual_precip')}</p>
-                        <p className="text-lg font-bold text-gray-900">{climateData.historical.total_precipitation_mm}mm</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-xl border border-gray-100">
-                        <p className="text-xs text-gray-500 font-medium">{t('risk.frost_days')}</p>
-                        <p className="text-lg font-bold text-gray-900">{climateData.historical.frost_days}</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-xl border border-gray-100">
-                        <p className="text-xs text-gray-500 font-medium">{t('risk.extreme_heat')}</p>
-                        <p className="text-lg font-bold text-gray-900">{climateData.historical.extreme_heat_days} {t('risk.days')}</p>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full py-6 text-center">
-                    <Info className="w-8 h-8 text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-500">{language === 'pt' ? 'Dados históricos indisponíveis para esta região no momento.' : 'Historical data unavailable for this region at the moment.'}</p>
+              <div className="glass-card p-6 rounded-[2.5rem] flex items-center gap-6 group hover:shadow-2xl transition-all">
+                <div className="p-4 bg-cyan-50 text-cyan-600 rounded-[1.5rem] group-hover:scale-110 transition-transform shadow-inner">
+                  <CloudRain className="w-8 h-8" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1.5">{t('risk.precipitation')}</p>
+                  <div className="flex items-baseline gap-1.5">
+                    <p className="text-4xl font-black text-gray-900 font-display tracking-tight">{climateData.current.precipitation_mm}</p>
+                    <span className="text-sm font-black text-gray-400">mm</span>
                   </div>
-                )}
+                </div>
               </div>
+
+              <div className="glass-card p-6 rounded-[2.5rem] flex items-center gap-6 group hover:shadow-2xl transition-all">
+                <div className="p-4 bg-purple-50 text-purple-600 rounded-[1.5rem] group-hover:scale-110 transition-transform shadow-inner">
+                  <Sun className="w-8 h-8" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1.5">{t('risk.uv_index')}</p>
+                  <p className="text-4xl font-black text-gray-900 font-display tracking-tight">{climateData.current.uv_index}</p>
+                  <p className={`text-[10px] font-black uppercase tracking-widest mt-1.5 px-3 py-1 bg-white/50 rounded-full inline-block ${getUVClassification(climateData.current.uv_index).color}`}>
+                    {getUVClassification(climateData.current.uv_index).text}
+                  </p>
+                </div>
+              </div>
+
+              <div className="glass-card p-6 rounded-[2.5rem] flex items-center gap-6 group hover:shadow-2xl transition-all">
+                <div className="p-4 bg-amber-50 text-amber-700 rounded-[1.5rem] group-hover:scale-110 transition-transform shadow-inner">
+                  <Thermometer className="w-8 h-8" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1.5">{t('risk.soil_temp')}</p>
+                  <p className="text-4xl font-black text-gray-900 font-display tracking-tight">{climateData.current.soil_temperature_c ?? '--'}°C</p>
+                </div>
+              </div>
+
+              <div className="glass-card p-6 rounded-[2.5rem] flex items-center gap-6 group hover:shadow-2xl transition-all">
+                <div className="p-4 bg-emerald-50 text-emerald-700 rounded-[1.5rem] group-hover:scale-110 transition-transform shadow-inner">
+                  <Droplets className="w-8 h-8" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1.5">{t('risk.soil_moisture')}</p>
+                  <p className="text-4xl font-black text-gray-900 font-display tracking-tight">{climateData.current.soil_moisture_percent ?? '--'}%</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* 7-day Forecast */}
+                <div className="lg:col-span-2 glass-card rounded-[2.5rem] p-8 shadow-futuristic border border-white/60">
+                  <h3 className="text-xl font-black text-gray-900 mb-8 flex items-center tracking-tight font-display">
+                    <div className="bg-emerald-50 text-emerald-600 p-2 rounded-xl mr-3">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    {t('risk.forecast_7days')}
+                  </h3>
+                  <div className="flex gap-6 overflow-x-auto pb-4 custom-scrollbar">
+                    {climateData.forecast_7days.map((day, i) => {
+                      const dateObj = new Date(day.date + 'T12:00:00');
+                      const dayName = dateObj.toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US', { weekday: 'short' }).replace('.', '');
+                      
+                      let barColor = 'bg-gray-200';
+                      if (day.frost_risk) barColor = 'bg-purple-500';
+                      else if (day.heat_stress_risk) barColor = 'bg-amber-500';
+                      else if (day.precipitation_mm > 5) barColor = 'bg-blue-400';
+
+                      return (
+                        <div key={i} className="flex flex-col items-center p-5 rounded-[2rem] border border-gray-100 bg-gray-50/50 w-28 flex-shrink-0 group hover:bg-white hover:shadow-soft transition-all">
+                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">{dayName}</span>
+                          <div className="flex flex-col items-center gap-1 mb-4">
+                            <span className="text-2xl font-black text-gray-900 font-display group-hover:text-emerald-600">{Math.round(day.temp_max_c)}°</span>
+                            <span className="text-xs font-bold text-gray-400">{Math.round(day.temp_min_c)}°</span>
+                          </div>
+                          <div className="flex items-center text-[10px] text-blue-600 font-black uppercase tracking-widest mb-4">
+                            <Droplets className="w-3.5 h-3.5 mr-1" />
+                            {day.precipitation_mm}mm
+                          </div>
+                          <div className={`w-full h-2 rounded-full ${barColor} shadow-inner`}></div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="glass-card rounded-[2.5rem] p-8 shadow-futuristic border border-white/60 bg-white/45">
+                   <h3 className="text-xl font-black text-gray-900 mb-2 tracking-tight font-display">
+                    {climateData.historical?.source === 'open-meteo' 
+                      ? t('risk.historical_source_satellite') 
+                      : t('risk.historical_source_official')}
+                  </h3>
+                  
+                  {climateData.historical ? (
+                    <>
+                      <p className="text-xs text-gray-400 font-medium mb-8 leading-relaxed">
+                        {climateData.historical.source === 'open-meteo' 
+                          ? t('risk.historical_satellite_desc') 
+                          : t('risk.historical_station_desc')
+                             .replace('{name}', climateData.historical.station_name)
+                             .replace('{distance}', climateData.historical.distance_km.toString())
+                             .replace('{period}', climateData.historical.period)}
+                      </p>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-white/60 p-4 rounded-2xl border border-white/40 shadow-sm group hover:scale-105 transition-transform">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{t('risk.avg_temp')}</p>
+                          <p className="text-xl font-black text-gray-900 font-display">{climateData.historical.avg_temp_c}°C</p>
+                        </div>
+                        <div className="bg-white/60 p-4 rounded-2xl border border-white/40 shadow-sm group hover:scale-105 transition-transform">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{t('risk.annual_precip')}</p>
+                          <p className="text-xl font-black text-gray-900 font-display">{climateData.historical.total_precipitation_mm}mm</p>
+                        </div>
+                        <div className="bg-white/60 p-4 rounded-2xl border border-white/40 shadow-sm group hover:scale-105 transition-transform">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{t('risk.frost_days')}</p>
+                          <p className="text-xl font-black text-gray-900 font-display">{climateData.historical.frost_days}</p>
+                        </div>
+                        <div className="bg-white/60 p-4 rounded-2xl border border-white/40 shadow-sm group hover:scale-105 transition-transform">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{t('risk.extreme_heat')}</p>
+                          <p className="text-xl font-black text-gray-900 font-display">{climateData.historical.extreme_heat_days}</p>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                      <div className="p-4 bg-gray-50 rounded-full mb-4">
+                        <Info className="w-8 h-8 text-gray-300" />
+                      </div>
+                      <p className="text-xs text-gray-400 font-medium leading-relaxed">{language === 'pt' ? 'Dados históricos indisponíveis para esta região no momento.' : 'Historical data unavailable for this region at the moment.'}</p>
+                    </div>
+                  )}
+                </div>
             </div>
           </div>
 

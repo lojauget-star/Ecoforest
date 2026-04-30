@@ -138,7 +138,7 @@ function ProducerMap({ producers, activeProducer, onSelectProducer }: { producer
         }
     }, [activeProducer]);
 
-    return <div ref={mapContainerRef} className="h-[80vh] w-full rounded-xl shadow-soft" />;
+    return <div ref={mapContainerRef} className="h-[80vh] w-full rounded-2xl shadow-futuristic overflow-hidden" />;
 }
 
 interface ProducerCardProps {
@@ -148,15 +148,15 @@ interface ProducerCardProps {
 
 const ProducerCard: React.FC<ProducerCardProps> = ({ producer, onSelect }) => {
     return (
-        <div onClick={() => onSelect(producer)} className="flex items-start space-x-4 p-4 bg-white rounded-xl border border-gray-200 hover:border-emerald-500 hover:shadow-soft transition-all duration-200 cursor-pointer">
-            <img src={producer.image} alt={producer.name} className="w-16 h-16 rounded-lg object-cover" />
+        <div onClick={() => onSelect(producer)} className="flex items-start space-x-4 p-5 glass-card rounded-2xl hover:bg-white hover:shadow-futuristic transition-all duration-300 cursor-pointer active:scale-[0.98]">
+            <img src={producer.image} alt={producer.name} className="w-16 h-16 rounded-xl object-cover shadow-sm" />
             <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-gray-900 truncate">{producer.name}</h3>
-                <div className="text-sm text-gray-500 flex flex-wrap gap-x-2 gap-y-1 mt-1">
-                    {producer.products.slice(0, 3).map(p => <span key={p.name}>{p.name}</span>)}
+                <h3 className="font-black text-gray-900 truncate font-display tracking-tight">{producer.name}</h3>
+                <div className="text-xs text-gray-400 flex flex-wrap gap-x-2 gap-y-1 mt-1 font-medium">
+                    {producer.products.slice(0, 2).map(p => <span key={p.name} className="truncate capitalize">{p.name}</span>)}
                 </div>
-                <div className="flex space-x-2 mt-2 text-emerald-600">
-                    {producer.seals.map(sealId => <span key={sealId} title={sealId}><SealIcon sealId={sealId} /></span>)}
+                <div className="flex space-x-2 mt-3 text-emerald-600">
+                    {producer.seals.map(sealId => <span key={sealId} title={sealId} className="bg-emerald-50 p-1.5 rounded-lg border border-emerald-100"><SealIcon sealId={sealId} /></span>)}
                 </div>
             </div>
         </div>
@@ -165,12 +165,17 @@ const ProducerCard: React.FC<ProducerCardProps> = ({ producer, onSelect }) => {
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     return (
-        <div className="flex items-center space-x-4 p-3 bg-gray-100 rounded-lg border border-gray-200">
-            <img src={product.image} alt={product.name} className="w-16 h-16 rounded-md object-cover" />
+        <div className="flex items-center space-x-5 p-4 bg-gray-50/50 rounded-2xl border border-gray-100 hover:bg-white hover:shadow-soft transition-all group">
+            <img src={product.image} alt={product.name} className="w-20 h-20 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform" />
             <div className="flex-1">
-                <h5 className="font-bold text-sm text-gray-800">{product.name}</h5>
-                <p className="text-xs text-gray-500">{product.description}</p>
-                <p className="text-sm font-semibold text-emerald-700 mt-1">{product.price}</p>
+                <h5 className="font-black text-gray-900 font-display tracking-tight text-sm">{product.name}</h5>
+                <p className="text-xs text-gray-400 font-medium mt-0.5 leading-relaxed">{product.description}</p>
+                <div className="flex items-center justify-between mt-3">
+                    <p className="text-sm font-black text-emerald-600">{product.price}</p>
+                    <button className="bg-emerald-50 text-emerald-600 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -179,40 +184,24 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 function ProducerDetail({ producer, onBack }: { producer: Producer, onBack: () => void }) {
     const { t } = useI18n();
     return (
-        <div className="bg-white p-4 rounded-xl border border-gray-200 flex flex-col h-full animate-fade-in">
-            <button onClick={onBack} className="flex items-center text-sm font-semibold text-emerald-600 hover:text-emerald-700 mb-4 self-start">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+        <div className="glass-card p-6 rounded-3xl h-full flex flex-col animate-fade-in shadow-futuristic">
+            <button onClick={onBack} className="flex items-center text-xs font-black text-emerald-600 hover:text-emerald-700 mb-6 self-start uppercase tracking-widest bg-emerald-50 px-4 py-2 rounded-full transition-all active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 {t('producers.back_to_list')}
             </button>
-            <img src={producer.image} alt={producer.name} className="w-full h-40 rounded-lg object-cover mb-4"/>
-            <div className="space-y-5 overflow-y-auto pr-2 flex-grow">
-                <h2 className="text-2xl font-bold text-gray-900">{producer.name}</h2>
+            <img src={producer.image} alt={producer.name} className="w-full h-48 rounded-2xl object-cover mb-6 shadow-md"/>
+            <div className="space-y-6 overflow-y-auto pr-2 flex-grow custom-scrollbar">
+                <h2 className="text-3xl font-black text-gray-900 font-display tracking-tight leading-tight">{producer.name}</h2>
                 <div>
-                    <h4 className="font-semibold text-gray-500 uppercase text-xs tracking-wider">{t('producers.story')}</h4>
-                    <p className="text-gray-700 text-sm mt-1">{producer.story}</p>
+                    <h4 className="font-black text-gray-400 uppercase text-[10px] tracking-[0.2em] mb-2">{t('producers.story')}</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed font-medium">{producer.story}</p>
                 </div>
                 <div>
-                    <h4 className="font-semibold text-gray-500 uppercase text-xs tracking-wider">{t('producers.products_available')}</h4>
-                    <div className="space-y-3 mt-2">
+                    <h4 className="font-black text-gray-400 uppercase text-[10px] tracking-[0.2em] mb-4">{t('producers.products_available')}</h4>
+                    <div className="space-y-4">
                         {producer.products.map(product => (
                             <ProductCard key={product.name} product={product} />
                         ))}
-                    </div>
-                </div>
-                <div>
-                    <h4 className="font-semibold text-gray-500 uppercase text-xs tracking-wider">{t('producers.seals')}</h4>
-                    <div className="space-y-3 mt-2">
-                        {producer.seals.map(sealId => {
-                            return (
-                                <div key={sealId} className="flex items-start space-x-3">
-                                    <span className="text-emerald-600 mt-1"><SealIcon sealId={sealId}/></span>
-                                    <div>
-                                        <p className="font-semibold text-sm text-gray-800">{t(`seals.${sealId}.name`)}</p>
-                                        <p className="text-xs text-gray-500">{t(`seals.${sealId}.description`)}</p>
-                                    </div>
-                                </div>
-                            )
-                        })}
                     </div>
                 </div>
             </div>
@@ -252,59 +241,70 @@ function QuizModal({ onClose }: { onClose: () => void }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white rounded-xl shadow-md w-full max-w-lg max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
-                <div className="flex justify-between items-center p-4 border-b border-gray-200">
-                    <h2 className="text-lg font-bold text-gray-900">
+        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
+            <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col border border-white/20 overflow-hidden" onClick={e => e.stopPropagation()}>
+                <div className="flex justify-between items-center p-8 border-b border-gray-50">
+                    <h2 className="text-2xl font-black text-gray-900 font-display tracking-tight">
                         {step === 'results' ? t('quiz.your_tips') : t('quiz.title')}
                     </h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-800 text-2xl font-bold">&times;</button>
+                    <button onClick={onClose} className="w-10 h-10 bg-gray-50 text-gray-400 hover:text-gray-900 rounded-full flex items-center justify-center transition-all active:scale-90 font-bold">&times;</button>
                 </div>
 
-                <div className="p-6 space-y-6 overflow-y-auto">
+                <div className="p-8 space-y-8 overflow-y-auto custom-scrollbar">
                     {step === 'quiz' && (
                         <>
                             {questions.map(q => (
                                 <div key={q.id}>
-                                    <p className="font-semibold text-gray-700 mb-2">{q.title}</p>
-                                    <div className="flex flex-col space-y-2">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">{q.title}</p>
+                                    <div className="flex flex-col space-y-3">
                                         {q.options.map(opt => (
-                                            <label key={opt} className={`flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200 border ${answers[q.id] === opt ? 'bg-emerald-50 border-emerald-400' : 'bg-white border-gray-200 hover:bg-gray-100'}`}>
-                                                <input type="radio" name={q.id} value={opt} onChange={() => handleAnswer(q.id, opt)} className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300" />
-                                                <span className="ml-3 text-sm text-gray-800">{opt}</span>
+                                            <label key={opt} className={`flex items-center p-4 rounded-2xl cursor-pointer transition-all duration-300 border ${answers[q.id] === opt ? 'bg-emerald-50 border-emerald-400 ring-2 ring-emerald-400/20' : 'bg-gray-50/50 border-transparent hover:bg-gray-100'}`}>
+                                                <input type="radio" name={q.id} value={opt} checked={answers[q.id] === opt} onChange={() => handleAnswer(q.id, opt)} className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300" />
+                                                <span className="ml-4 text-sm font-bold text-gray-700">{opt}</span>
                                             </label>
                                         ))}
                                     </div>
                                 </div>
                             ))}
-                            {error && <p className="text-red-600 text-sm">{error}</p>}
+                            {error && <p className="text-red-500 text-xs font-bold bg-red-50 p-3 rounded-xl border border-red-100">{error}</p>}
                         </>
                     )}
 
                     {step === 'loading' && (
-                        <div className="flex flex-col items-center justify-center py-12">
-                            <svg className="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            <p className="mt-4 font-semibold text-gray-600">{t('quiz.getting_tips')}</p>
+                        <div className="flex flex-col items-center justify-center py-16">
+                            <div className="relative w-16 h-16 mb-6">
+                                <div className="absolute inset-0 border-4 border-emerald-100 rounded-full"></div>
+                                <div className="absolute inset-0 border-4 border-emerald-600 rounded-full border-t-transparent animate-spin"></div>
+                            </div>
+                            <p className="font-black text-gray-900 font-display tracking-tight text-xl">{t('quiz.getting_tips')}</p>
+                            <p className="text-gray-400 text-sm font-medium mt-2">Nossa IA está analisando sua rotina...</p>
                         </div>
                     )}
                     
                     {step === 'results' && (
-                        <div className="prose prose-sm max-w-none prose-p:text-gray-600 prose-strong:text-gray-900" dangerouslySetInnerHTML={{ __html: tips.replace(/\n/g, '<br />') }} />
+                        <div className="prose prose-sm max-w-none prose-p:text-gray-600 prose-p:leading-relaxed prose-strong:text-gray-900 prose-strong:font-black">
+                            <div className="bg-emerald-50/50 p-6 rounded-3xl border border-emerald-100 mb-6">
+                                <p className="text-emerald-800 font-medium !m-0">
+                                    Baseado nas suas respostas, aqui estão algumas sugestões personalizadas para tornar seu consumo mais consciente e impactante.
+                                </p>
+                            </div>
+                            <div dangerouslySetInnerHTML={{ __html: tips.replace(/\n/g, '<br />') }} />
+                        </div>
                     )}
                 </div>
                 
-                <div className="p-4 border-t border-gray-200">
+                <div className="p-8 border-t border-gray-50 mt-auto">
                     {step === 'quiz' && (
                         <button 
                             onClick={handleSubmit} 
                             disabled={Object.keys(answers).length !== questions.length}
-                             className="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed shadow-soft hover:bg-emerald-700 active:bg-emerald-800"
+                             className="w-full bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] py-5 px-6 rounded-2xl transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_30px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_40px_rgba(16,185,129,0.4)] active:scale-[0.98]"
                         >
                             {t('quiz.get_tips')}
                         </button>
                     )}
                      {step !== 'quiz' && (
-                        <button onClick={onClose} className="w-full bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition">
+                        <button onClick={onClose} className="w-full bg-gray-50 text-gray-500 font-black text-xs uppercase tracking-[0.2em] py-4 px-6 rounded-2xl hover:bg-gray-100 transition-all active:scale-95 border border-gray-200/50">
                             {t('quiz.close')}
                         </button>
                      )}
@@ -318,11 +318,11 @@ function QuizModal({ onClose }: { onClose: () => void }) {
 
 // FIX: Add children to props type to allow component to have child elements.
 const Modal: React.FC<{onClose: () => void, title: string, children: React.ReactNode}> = ({onClose, title, children}) => (
-    <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
-        <div className="bg-white rounded-xl shadow-md w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center p-4 border-b border-gray-200">
-                <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-                <button onClick={onClose} className="text-gray-400 hover:text-gray-800 text-2xl font-bold">&times;</button>
+    <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
+        <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-white/20 overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-8 border-b border-gray-50">
+                <h2 className="text-2xl font-black text-gray-900 font-display tracking-tight">{title}</h2>
+                <button onClick={onClose} className="w-10 h-10 bg-gray-50 text-gray-400 hover:text-gray-900 rounded-full flex items-center justify-center transition-all active:scale-90 font-bold">&times;</button>
             </div>
             {children}
         </div>
@@ -333,28 +333,32 @@ function SealsModal({ onClose }: { onClose: () => void }) {
     const { t } = useI18n();
     return (
         <Modal onClose={onClose} title={t('modals.seals_title')}>
-            <div className="p-6 space-y-6 overflow-y-auto">
+            <div className="p-8 space-y-6 overflow-y-auto custom-scrollbar">
                 {sealsData.map(seal => {
                     const producersWithSeal = producersData.filter(p => p.seals.includes(seal.id));
                     return (
-                        <div key={seal.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <div className="flex items-start space-x-4">
-                                <span className="text-emerald-600"><SealIcon sealId={seal.id} /></span>
-                                <div>
-                                    <h3 className="font-bold text-gray-900">{t(`seals.${seal.id}.name`)}</h3>
-                                    <p className="text-sm text-gray-600 mt-1">{t(`seals.${seal.id}.description`)}</p>
+                        <div key={seal.id} className="p-6 bg-gray-50/50 rounded-3xl border border-gray-100 group transition-all hover:bg-white hover:shadow-soft">
+                            <div className="flex items-start space-x-5">
+                                <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform">
+                                    <SealIcon sealId={seal.id} />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="font-black text-gray-900 font-display tracking-tight">{t(`seals.${seal.id}.name`)}</h3>
+                                    <p className="text-sm text-gray-500 font-medium mt-1 leading-relaxed">{t(`seals.${seal.id}.description`)}</p>
                                 </div>
                             </div>
-                            <div className="mt-4 pt-4 border-t border-gray-200">
-                                <h4 className="font-semibold text-xs text-gray-500 uppercase tracking-wider mb-2">{t('modals.producers_with_seal')}</h4>
+                            <div className="mt-6 pt-6 border-t border-gray-100">
+                                <h4 className="font-black text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-3">{t('modals.producers_with_seal')}</h4>
                                 {producersWithSeal.length > 0 ? (
                                     <div className="flex flex-wrap gap-2">
                                         {producersWithSeal.map(p => (
-                                            <span key={p.id} className="text-xs bg-gray-200 text-gray-800 px-2 py-1 rounded-full">{p.name}</span>
+                                            <span key={p.id} className="text-[10px] font-black uppercase tracking-widest bg-white border border-gray-100 text-gray-500 px-3 py-1.5 rounded-full shadow-sm">
+                                                {p.name}
+                                            </span>
                                         ))}
                                     </div>
                                 ) : (
-                                    <p className="text-xs text-gray-500">{t('modals.no_producers_with_seal')}</p>
+                                    <p className="text-xs text-gray-400 font-medium italic">{t('modals.no_producers_with_seal')}</p>
                                 )}
                             </div>
                         </div>
@@ -374,21 +378,29 @@ function ImpactModal({ onClose }: { onClose: () => void }) {
     };
     return (
        <Modal onClose={onClose} title={t('modals.impact_title')}>
-            <div className="p-6 space-y-4">
-                <p className="text-center text-sm text-gray-500">{t('modals.total_impact')}</p>
-                <div className="space-y-4">
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm font-medium text-blue-600">{t('modals.impact_metric1')}</p>
-                        <p className="text-3xl font-bold text-blue-700">{impactData.water.toLocaleString()} L</p>
+            <div className="p-8 space-y-6">
+                <p className="text-center text-sm text-gray-500 font-medium">{t('modals.total_impact')}</p>
+                <div className="grid grid-cols-1 gap-4">
+                    <div className="p-6 bg-blue-50/50 border border-blue-100 rounded-[2rem] group hover:bg-white transition-all hover:shadow-soft">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-2">{t('modals.impact_metric1')}</p>
+                        <p className="text-4xl font-black text-blue-600 font-display tracking-tight group-hover:scale-105 transition-transform origin-left">{impactData.water.toLocaleString()} <span className="text-sm font-black opacity-50">L</span></p>
                     </div>
-                     <div className="p-4 bg-gray-100 border border-gray-200 rounded-lg">
-                        <p className="text-sm font-medium text-gray-600">{t('modals.impact_metric2')}</p>
-                        <p className="text-3xl font-bold text-gray-800">{impactData.co2.toLocaleString()} kg</p>
+                     <div className="p-6 bg-gray-50 border border-gray-200 rounded-[2rem] group hover:bg-white transition-all hover:shadow-soft">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">{t('modals.impact_metric2')}</p>
+                        <p className="text-4xl font-black text-gray-800 font-display tracking-tight group-hover:scale-105 transition-transform origin-left">{impactData.co2.toLocaleString()} <span className="text-sm font-black opacity-50">kg</span></p>
                     </div>
-                     <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-                        <p className="text-sm font-medium text-emerald-600">{t('modals.impact_metric3')}</p>
-                        <p className="text-3xl font-bold text-emerald-700">R$ {impactData.income.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                     <div className="p-6 bg-emerald-50/50 border border-emerald-100 rounded-[2rem] group hover:bg-white transition-all hover:shadow-soft">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-2">{t('modals.impact_metric3')}</p>
+                        <p className="text-4xl font-black text-emerald-600 font-display tracking-tight group-hover:scale-105 transition-transform origin-left">R$ {impactData.income.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     </div>
+                </div>
+                <div className="bg-gray-50 p-6 rounded-2xl flex items-start gap-4">
+                    <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <p className="text-xs text-gray-500 font-medium leading-relaxed">
+                        Esses dados são estimativas baseadas nas compras registradas pela comunidade nos produtores parceiros.
+                    </p>
                 </div>
             </div>
        </Modal>
@@ -563,46 +575,67 @@ export function ProducersView({ filter, onClearFilter }: ProducersViewProps) {
     }, [filter, filteredProducers, activeProducer]);
 
     return (
-        <div className="animate-fade-in">
-            <div className="text-center mb-12">
-                <h1 className="text-4xl lg:text-5xl font-black text-gray-900">{t('producers.title')}</h1>
-                <p className="text-gray-600 mt-2 max-w-2xl mx-auto">{t('producers.description')}</p>
+        <div className="animate-fade-in space-y-8">
+            <div className="text-center mb-16">
+                <h1 className="text-5xl lg:text-6xl font-black text-gray-900 tracking-tight font-display mb-4">
+                    {t('producers.title')}
+                </h1>
+                <p className="text-gray-500 font-medium text-lg max-w-2xl mx-auto leading-relaxed">
+                    {t('producers.description')}
+                </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div onClick={() => setSealsModalOpen(true)} className="group p-6 bg-white rounded-xl shadow-soft hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col items-start border border-gray-200">
-                    <div className="p-3 bg-emerald-100 rounded-full"><SealsCardIcon /></div>
-                    <h3 className="font-bold text-lg text-gray-800 mt-4">{t('producers.know_the_seals')}</h3>
-                    <p className="text-sm text-gray-500 mt-1 flex-grow">{t('producers.know_the_seals_desc')}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div onClick={() => setSealsModalOpen(true)} className="group p-8 glass-card rounded-[2.5rem] shadow-futuristic hover:bg-white transition-all cursor-pointer flex flex-col items-start active:scale-95">
+                    <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:bg-emerald-100 transition-colors">
+                        <SealsCardIcon />
+                    </div>
+                    <h3 className="font-black text-xl text-gray-900 mt-6 font-display tracking-tight">{t('producers.know_the_seals')}</h3>
+                    <p className="text-sm text-gray-500 font-medium mt-2 flex-grow leading-relaxed">{t('producers.know_the_seals_desc')}</p>
                 </div>
-                <div onClick={() => setScanModalOpen(true)} className="group p-6 bg-white rounded-xl shadow-soft hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col items-start border border-gray-200">
-                    <div className="p-3 bg-blue-100 rounded-full"><ScanCardIcon /></div>
-                    <h3 className="font-bold text-lg text-gray-800 mt-4">{t('producers.track_product')}</h3>
-                    <p className="text-sm text-gray-500 mt-1 flex-grow">{t('producers.track_product_desc')}</p>
+                
+                <div onClick={() => setScanModalOpen(true)} className="group p-8 glass-card rounded-[2.5rem] shadow-futuristic hover:bg-white transition-all cursor-pointer flex flex-col items-start active:scale-95">
+                    <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-100 transition-colors">
+                        <ScanCardIcon />
+                    </div>
+                    <h3 className="font-black text-xl text-gray-900 mt-6 font-display tracking-tight">{t('producers.track_product')}</h3>
+                    <p className="text-sm text-gray-500 font-medium mt-2 flex-grow leading-relaxed">{t('producers.track_product_desc')}</p>
                 </div>
-                 <div onClick={() => setImpactModalOpen(true)} className="group p-6 bg-white rounded-xl shadow-soft hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col items-start border border-gray-200">
-                    <div className="p-3 bg-purple-100 rounded-full"><ImpactCardIcon /></div>
-                    <h3 className="font-bold text-lg text-gray-800 mt-4">{t('producers.your_impact')}</h3>
-                    <p className="text-sm text-gray-500 mt-1 flex-grow">{t('producers.your_impact_desc')}</p>
+
+                <div onClick={() => setImpactModalOpen(true)} className="group p-8 glass-card rounded-[2.5rem] shadow-futuristic hover:bg-white transition-all cursor-pointer flex flex-col items-start active:scale-95">
+                    <div className="p-4 bg-purple-50 text-purple-600 rounded-2xl group-hover:bg-purple-100 transition-colors">
+                        <ImpactCardIcon />
+                    </div>
+                    <h3 className="font-black text-xl text-gray-900 mt-6 font-display tracking-tight">{t('producers.your_impact')}</h3>
+                    <p className="text-sm text-gray-500 font-medium mt-2 flex-grow leading-relaxed">{t('producers.your_impact_desc')}</p>
                 </div>
-                 <button 
+
+                <button 
                     onClick={() => setQuizOpen(true)} 
-                    className="group p-6 bg-emerald-600 text-white rounded-xl shadow-soft hover:shadow-md hover:bg-emerald-700 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center text-center w-full"
+                    className="group p-8 bg-emerald-600 text-white rounded-[2.5rem] shadow-[0_20px_40px_rgba(16,185,129,0.3)] hover:bg-emerald-700 transition-all flex flex-col items-center justify-center text-center w-full active:scale-95 border border-emerald-400/30"
                   >
-                    <h3 className="font-bold text-lg w-full">{t('producers.take_quiz_button')}</h3>
-                    <p className="text-sm text-emerald-100 mt-1 flex-grow w-full">{t('producers.take_quiz_button_desc')}</p>
+                    <h3 className="font-black text-xl w-full font-display tracking-tight">{t('producers.take_quiz_button')}</h3>
+                    <p className="text-sm text-emerald-50/70 font-medium mt-2 flex-grow w-full leading-relaxed">{t('producers.take_quiz_button_desc')}</p>
+                    <div className="mt-4 bg-emerald-500/30 py-2 px-6 rounded-full text-xs font-bold uppercase tracking-widest border border-white/20 backdrop-blur-sm">
+                        {t('common.start') || 'Começar'}
+                    </div>
                 </button>
             </div>
 
             {filter && (
-                <div className="mb-6 bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex items-center justify-between shadow-soft">
+                <div className="mb-8 bg-emerald-50/50 backdrop-blur-md border border-emerald-100 p-6 rounded-[2rem] flex items-center justify-between shadow-soft animate-fade-in">
                     <div>
-                        <p className="text-sm text-emerald-900 font-medium">
-                            {t('producers.showing_filter')} <span className="font-bold">"{filter}"</span>
+                        <p className="text-sm text-emerald-900 font-black uppercase tracking-widest mb-1">
+                            {t('producers.showing_filter')}
                         </p>
-                        <p className="text-xs text-emerald-700">{filteredProducers.length} {filteredProducers.length === 1 ? t('producers.producer_found_one') : t('producers.producer_found_other')}</p>
+                        <div className="flex items-center gap-3">
+                            <span className="text-2xl font-black text-emerald-700 font-display tracking-tight">"{filter}"</span>
+                            <span className="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest">
+                                {filteredProducers.length} {filteredProducers.length === 1 ? t('producers.producer_found_one') : t('producers.producer_found_other')}
+                            </span>
+                        </div>
                     </div>
-                    <button onClick={onClearFilter} className="text-sm font-semibold text-emerald-700 bg-white px-4 py-2 rounded-lg border border-emerald-300 hover:bg-emerald-100 transition-colors">
+                    <button onClick={onClearFilter} className="px-6 py-3 bg-white text-emerald-700 font-black text-xs uppercase tracking-widest rounded-full shadow-sm hover:shadow-md transition-all active:scale-95 border border-emerald-100">
                         {t('producers.clear_filter')}
                     </button>
                 </div>
@@ -613,20 +646,24 @@ export function ProducersView({ filter, onClearFilter }: ProducersViewProps) {
                     {activeProducer ? (
                         <ProducerDetail producer={activeProducer} onBack={() => setActiveProducer(null)} />
                     ) : (
-                        <div className="bg-white p-4 rounded-xl border border-gray-200 h-full flex flex-col">
-                             <div className="flex justify-between items-center mb-4 px-2">
-                                <h3 className="font-bold text-lg text-gray-800">{filteredProducers.length} {filteredProducers.length === 1 ? t('producers.producer_found_one') : t('producers.producer_found_other')}</h3>
-                                <button onClick={() => setRegisterModalOpen(true)} className="text-sm font-bold text-emerald-700 bg-emerald-100 px-3 py-1.5 rounded-lg hover:bg-emerald-200 transition whitespace-nowrap">
+                        <div className="glass-card p-6 rounded-3xl h-full flex flex-col shadow-futuristic">
+                             <div className="flex justify-between items-center mb-6 px-2">
+                                <h3 className="font-black text-gray-900 font-display tracking-tight">
+                                    {filteredProducers.length} <span className="text-gray-400 text-xs font-medium ml-1">Results</span>
+                                </h3>
+                                <button onClick={() => setRegisterModalOpen(true)} className="text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 px-4 py-2 rounded-full hover:bg-emerald-100 transition-all active:scale-95 border border-emerald-100">
                                     {t('producers.register_button')}
                                 </button>
                             </div>
-                            <div className="space-y-3 overflow-y-auto pr-2 flex-grow">
+                            <div className="space-y-4 overflow-y-auto pr-2 flex-grow custom-scrollbar">
                                 {filteredProducers.length > 0 ? (
                                     filteredProducers.map(p => (
                                         <ProducerCard key={p.id} producer={p} onSelect={setActiveProducer} />
                                     ))
                                 ) : (
-                                    <p className="text-center text-gray-500 p-8">{t('producers.no_producers_found')}</p>
+                                    <div className="flex flex-col items-center justify-center p-12 text-center">
+                                        <p className="text-gray-400 font-medium text-sm">{t('producers.no_producers_found')}</p>
+                                    </div>
                                 )}
                             </div>
                         </div>

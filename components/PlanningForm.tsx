@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import type { PlanRequest } from '../types';
 import { useI18n } from '../i18n';
+import { Loader2 } from 'lucide-react';
 
 interface PlanningFormProps {
   requestData: Partial<PlanRequest>;
@@ -22,7 +23,7 @@ const FieldSpinner: React.FC = () => (
 // FIX: Add children to props type to allow component to have child elements.
 const Label: React.FC<{ htmlFor?: string, className?: string, showSpinner?: boolean, children: React.ReactNode }> = ({ htmlFor, children, className, showSpinner }) => {
     return (
-        <label htmlFor={htmlFor} className={`flex items-center text-sm font-medium text-gray-600 mb-2 ${className}`}>
+        <label htmlFor={htmlFor} className={`flex items-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ${className}`}>
             {children}
             {showSpinner && <FieldSpinner />}
         </label>
@@ -30,11 +31,11 @@ const Label: React.FC<{ htmlFor?: string, className?: string, showSpinner?: bool
 }
 
 function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-    return <input {...props} className="w-full px-4 py-3 bg-gray-100 text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition duration-200 disabled:bg-gray-200 disabled:cursor-not-allowed" />
+    return <input {...props} className="w-full px-5 py-4 bg-gray-50/50 text-gray-900 border border-transparent focus:bg-white rounded-[1.25rem] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none font-medium shadow-inner disabled:opacity-50 disabled:cursor-not-allowed" />
 }
 
 function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-    return <select {...props} className="w-full px-4 py-3 bg-gray-100 text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition duration-200 appearance-none disabled:bg-gray-200 disabled:cursor-not-allowed" style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 1rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.25em'}} />
+    return <select {...props} className="w-full px-5 py-4 bg-gray-50/50 text-gray-900 border border-transparent focus:bg-white rounded-[1.25rem] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none font-medium shadow-inner appearance-none disabled:opacity-50 disabled:cursor-not-allowed" style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2310b981' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 1.25rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.25em'}} />
 }
 
 
@@ -83,38 +84,44 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
   };
   
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">{t('form.title1')}</h2>
-        <p className="text-sm text-gray-500 mt-1">{t('form.subtitle1')}</p>
+    <div className="space-y-12">
+      <div className="pt-2 sm:pt-4">
+        <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight font-display mb-2">{t('form.title1')}</h2>
+        <div className="h-1.5 w-12 bg-emerald-500 rounded-full mb-4"></div>
+        <p className="text-gray-500 font-medium">{t('form.subtitle1')}</p>
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
           <Label>{t('form.area_label')}</Label>
-          <div className="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg">
-            <span className="text-gray-900 font-mono">{requestData.area_ha?.toFixed(3) || '0.000'}</span>
+          <div className="w-full px-5 py-4 bg-emerald-50/50 border border-emerald-100 rounded-[1.25rem] shadow-inner flex items-center justify-between">
+            <span className="text-emerald-700 font-black text-lg font-mono">{requestData.area_ha?.toFixed(3) || '0.000'}</span>
+            <span className="text-emerald-600 font-black text-[10px] uppercase tracking-widest">Hectares</span>
           </div>
-          <p className="text-xs text-gray-500 mt-2">{t('form.area_note')}</p>
+          <p className="text-[10px] text-gray-400 font-medium mt-2">{t('form.area_note')}</p>
         </div>
-        <div>
-          <Label htmlFor="soil_type" showSpinner={isEnriching}>{t('form.soil_label')}</Label>
-          <Select id="soil_type" value={requestData.soil_type} onChange={e => updateRequestData({ soil_type: e.target.value })} disabled={isEnriching}>
-            <option value="argiloso">{t('form.soil_options.clay')}</option>
-            <option value="arenoso">{t('form.soil_options.sandy')}</option>
-            <option value="siltoso">{t('form.soil_options.silty')}</option>
-            <option value="humifero">{t('form.soil_options.loamy')}</option>
-          </Select>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="soil_type" showSpinner={isEnriching}>{t('form.soil_label')}</Label>
+            <Select id="soil_type" value={requestData.soil_type} onChange={e => updateRequestData({ soil_type: e.target.value })} disabled={isEnriching}>
+              <option value="argiloso">{t('form.soil_options.clay')}</option>
+              <option value="arenoso">{t('form.soil_options.sandy')}</option>
+              <option value="siltoso">{t('form.soil_options.silty')}</option>
+              <option value="humifero">{t('form.soil_options.loamy')}</option>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="climate" showSpinner={isEnriching}>{t('form.climate_label')}</Label>
+            <Select id="climate" value={requestData.climate} onChange={e => updateRequestData({ climate: e.target.value })} disabled={isEnriching}>
+              <option value="subtropical_umido">{t('form.climate_options.subtropical')}</option>
+              <option value="tropical">{t('form.climate_options.tropical')}</option>
+              <option value="semiarido">{t('form.climate_options.semiarid')}</option>
+              <option value="equatorial">{t('form.climate_options.equatorial')}</option>
+            </Select>
+          </div>
         </div>
-        <div>
-          <Label htmlFor="climate" showSpinner={isEnriching}>{t('form.climate_label')}</Label>
-          <Select id="climate" value={requestData.climate} onChange={e => updateRequestData({ climate: e.target.value })} disabled={isEnriching}>
-            <option value="subtropical_umido">{t('form.climate_options.subtropical')}</option>
-            <option value="tropical">{t('form.climate_options.tropical')}</option>
-            <option value="semiarido">{t('form.climate_options.semiarid')}</option>
-            <option value="equatorial">{t('form.climate_options.equatorial')}</option>
-          </Select>
-        </div>
+
         <div>
           <Label>{t('form.objectives_label')}</Label>
           <div className="flex flex-wrap gap-2 mt-2">
@@ -122,10 +129,10 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
               <button 
                 key={obj}
                 onClick={() => handleObjectiveChange(obj)}
-                className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 border ${
+                className={`px-4 py-2 text-xs font-black uppercase tracking-widest rounded-full transition-all duration-300 active:scale-95 border ${
                   requestData.objectives?.includes(obj)
-                    ? 'bg-emerald-600 text-white border-emerald-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                    : 'bg-white text-gray-400 border-gray-100 hover:border-emerald-200 hover:text-emerald-600'
                 }`}
               >
                 {t(`form.objectives_options.${obj}`)}
@@ -135,7 +142,7 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
         </div>
 
         {/* Animal Integration Section */}
-        <div className="pt-4 border-t border-gray-200">
+        <div className="pt-8 border-t border-white/20">
           <Label htmlFor="animal_type">{t('form.animal_type_label')}</Label>
           <Select 
             id="animal_type" 
@@ -156,10 +163,10 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
                 <button 
                   key={goal}
                   onClick={() => handleAnimalWelfareChange(goal)}
-                  className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 border ${
+                  className={`px-4 py-2 text-xs font-black uppercase tracking-widest rounded-full transition-all duration-300 active:scale-95 border ${
                     requestData.animal_welfare_goals?.includes(goal)
-                      ? 'bg-emerald-600 text-white border-emerald-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                      : 'bg-white text-gray-400 border-gray-100 hover:border-emerald-200 hover:text-emerald-600'
                   }`}
                 >
                   {t(`form.animal_welfare_options.${goal}`)}
@@ -169,9 +176,9 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
           </div>
         )}
 
-        <div className="pt-4 border-t border-gray-200">
+        <div className="pt-8 border-t border-white/20">
             <Label htmlFor="preferred_species">{t('form.species_label')}</Label>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
                 <Input 
                     id="preferred_species" 
                     type="text" 
@@ -180,19 +187,26 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
                     onKeyDown={handleSpeciesInputKeyDown}
                     placeholder={t('form.species_placeholder')}
                 />
-                <button onClick={handleAddSpecies} type="button" className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-300 active:bg-gray-400 font-semibold transition-colors">{t('form.species_add')}</button>
+                <button 
+                  onClick={handleAddSpecies} 
+                  type="button" 
+                  className="px-6 py-4 bg-emerald-50 text-emerald-600 rounded-[1.25rem] border border-emerald-100 hover:bg-emerald-100 active:scale-95 font-black text-xs uppercase tracking-widest transition-all"
+                >
+                  {t('form.species_add')}
+                </button>
             </div>
-            <div className="flex flex-wrap gap-2 mt-3">
+            <div className="flex flex-wrap gap-2 mt-4">
                 {(requestData.preferred_species || []).map(species => (
-                    <div key={species} className="flex items-center bg-emerald-100 text-emerald-800 text-sm font-medium pl-3 pr-2 py-1 rounded-full">
+                    <div key={species} className="flex items-center bg-emerald-50 text-emerald-700 text-xs font-black uppercase tracking-widest pl-4 pr-2 py-1.5 rounded-full border border-emerald-100">
                         {species}
-                        <button onClick={() => handleRemoveSpecies(species)} className="ml-2 text-emerald-700 hover:text-emerald-900 font-bold">
+                        <button onClick={() => handleRemoveSpecies(species)} className="ml-2 w-5 h-5 flex items-center justify-center bg-white rounded-full text-emerald-400 hover:text-emerald-600 transition-colors">
                             &times;
                         </button>
                     </div>
                 ))}
             </div>
         </div>
+        
         <div>
             <Label htmlFor="data_source_link">{t('form.data_source_label')}</Label>
             <Input 
@@ -202,26 +216,23 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
                 onChange={e => updateRequestData({ data_source_link: e.target.value })}
                 placeholder={t('form.data_source_placeholder')}
             />
-             <p className="text-xs text-gray-500 mt-2">{t('form.data_source_note')}</p>
+             <p className="text-[10px] text-gray-400 font-medium mt-2 leading-relaxed">{t('form.data_source_note')}</p>
         </div>
       </div>
 
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mt-8">{t('form.title2')}</h2>
-        <p className="text-sm text-gray-500 mt-1">{t('form.subtitle2')}</p>
+      <div className="pt-4">
+        <h2 className="text-3xl font-black text-gray-900 tracking-tight font-display">{t('form.title2')}</h2>
+        <p className="text-sm text-gray-500 font-medium mt-1">{t('form.subtitle2')}</p>
       </div>
 
       <button
         onClick={onPlanRequest}
         disabled={isLoading || !requestData.area_geojson}
-        className="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-soft hover:bg-emerald-700 active:bg-emerald-800"
+        className="w-full bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] py-5 px-6 rounded-[1.5rem] transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 shadow-[0_10px_30px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_40px_rgba(16,185,129,0.4)] active:scale-[0.98] mt-6"
       >
         {isLoading ? (
             <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+                <Loader2 className="w-5 h-5 animate-spin" />
                 <span>{t('form.button_loading')}</span>
             </>
         ) : (

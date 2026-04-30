@@ -27,7 +27,7 @@ export type AppView = 'planner' | 'producers' | 'risk';
 
 export default function App() {
   const { language, t } = useI18n();
-  const [view, setView] = useState<AppView>('risk');
+  const [view, setView] = useState<AppView>('planner');
   const [planRequest, setPlanRequest] = useState<Partial<PlanRequest>>({
     location: { lat: -27.6, lng: -48.5 },
     soil_type: "argiloso",
@@ -109,13 +109,13 @@ export default function App() {
   }, [planResponse]);
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
+    <div className="min-h-screen bg-transparent font-sans flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
       <Navbar currentView={view} onViewChange={setView} />
-      <main className="flex-grow p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pt-20 pb-24">
+      <main className="flex-grow p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pt-20 sm:pt-24 lg:pt-28 pb-32 animate-fade-in">
         {view === 'planner' ? (
            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-             <div className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24">
-               <div className="bg-white p-6 rounded-2xl shadow-soft border border-gray-100">
+             <div className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 lg:z-30">
+               <div className="glass-card p-6 rounded-3xl shadow-futuristic relative">
                    <PlanningForm
                      requestData={planRequest}
                      updateRequestData={updateRequestData}
@@ -125,8 +125,8 @@ export default function App() {
                    />
                </div>
              </div>
-             <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-6">
-               <div className="bg-white p-1 rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
+             <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-8">
+               <div className="glass-card p-1.5 rounded-3xl shadow-futuristic overflow-hidden">
                    <MapEditor 
                      center={planRequest.location || { lat: -27.6, lng: -48.5 }}
                      onAreaDrawn={handleAreaDrawn}
@@ -135,7 +135,7 @@ export default function App() {
                    />
                </div>
                {isLoading && <LoadingSpinner />}
-               {error && <div className="text-red-700 bg-red-50 border border-red-100 p-4 rounded-xl font-medium">{error}</div>}
+               {error && <div className="text-red-700 bg-red-50/50 backdrop-blur-md border border-red-100 p-4 rounded-2xl font-medium animate-shake">{error}</div>}
                {planResponse ? (
                  <ResultsDisplay 
                    plan={planResponse} 
