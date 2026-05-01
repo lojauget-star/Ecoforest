@@ -6,7 +6,6 @@ import { PlanningForm } from './components/PlanningForm';
 import { MapEditor } from './components/MapEditor';
 import { ResultsDisplay } from './components/ResultsDisplay';
 import { LoadingSpinner } from './components/LoadingSpinner';
-import { Disclaimer } from './components/Disclaimer';
 import { ProducersView } from './components/ProducersView';
 import { RiskPrediction } from './components/RiskPrediction';
 import { Toast } from './components/Toast';
@@ -52,6 +51,23 @@ export default function App() {
       return () => clearTimeout(timer);
     }
   }, [toastMessage]);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setPlanRequest(prev => ({
+            ...prev,
+            location: { lat: latitude, lng: longitude }
+          }));
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+        }
+      );
+    }
+  }, []);
 
   const handlePlanRequest = useCallback(async () => {
     if (!planRequest.area_geojson) {
@@ -146,7 +162,7 @@ export default function App() {
                    feedbackSubmitted={feedbackSubmitted}
                    onFindProducersForSpecies={(s) => { setProducerFilter(s); setView('producers'); }}
                  />
-               ) : (!isLoading && <Disclaimer />)}
+               ) : null}
              </div>
            </div>
         ) : view === 'producers' ? (

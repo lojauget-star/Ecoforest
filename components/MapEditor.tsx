@@ -64,6 +64,13 @@ export function MapEditor({ center, onAreaDrawn, mapLayers, planId }: MapEditorP
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const lastFittedPlanIdRef = useRef<string | undefined>(undefined);
 
+  // Update map view when center prop changes (from geolocation)
+  useEffect(() => {
+    if (mapRef.current && center) {
+      mapRef.current.setView([center.lat, center.lng], 15);
+    }
+  }, [center.lat, center.lng]);
+
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
       const map = L.map(mapContainerRef.current, { maxZoom: 21, zoomControl: false }).setView([center.lat, center.lng], 13);
@@ -160,5 +167,23 @@ export function MapEditor({ center, onAreaDrawn, mapLayers, planId }: MapEditorP
     }
   }, [mapLayers, planId]);
 
-  return <div ref={mapContainerRef} style={{ height: '60vh', borderRadius: '0.75rem' }} />;
+  return (
+    <div className="relative overflow-hidden rounded-[1.25rem]">
+      <style>{`
+        @keyframes pulse-emerald {
+          0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .leaflet-draw-draw-polygon {
+          animation: pulse-emerald 2s infinite !important;
+          background-color: #ecfdf5 !important;
+          border: 2px solid #10b981 !important;
+          border-radius: 4px !important;
+        }
+      `}</style>
+      
+      <div ref={mapContainerRef} style={{ height: '60vh' }} />
+    </div>
+  );
 }

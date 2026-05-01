@@ -45,7 +45,6 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
   const animalTypeOptions = ["none", "cattle_dairy", "cattle_beef", "sheep", "poultry", "swine"];
   const animalWelfareOptions = ["shade", "windbreak", "forage", "predator_protection"];
   const [speciesInput, setSpeciesInput] = useState('');
-  const [showDisclaimer, setShowDisclaimer] = useState(true);
 
   const isObjectiveSelected = (requestData.objectives || []).length > 0;
   const hasArea = !!requestData.area_geojson;
@@ -90,26 +89,6 @@ export function PlanningForm({ requestData, updateRequestData, onPlanRequest, is
   
   return (
     <div className="space-y-12 animate-fade-in">
-      {showDisclaimer && (
-          <div className="bg-blue-50 border border-blue-100 p-4 rounded-2xl flex items-start gap-4 relative animate-fade-in shadow-sm">
-              <div className="p-2 bg-blue-100 text-blue-600 rounded-xl flex-shrink-0">
-                  <Info className="w-5 h-5" />
-              </div>
-              <div className="pr-8">
-                  <p className="text-xs font-bold text-blue-900 mb-1">{t('disclaimer.title')}</p>
-                  <p className="text-[10px] text-blue-700/80 leading-relaxed font-medium">
-                      {t('disclaimer.p1')} {t('disclaimer.p2')}
-                  </p>
-              </div>
-              <button 
-                  onClick={() => setShowDisclaimer(false)}
-                  className="absolute top-4 right-4 p-1 text-blue-400 hover:text-blue-600 transition-colors"
-              >
-                  <X className="w-4 h-4" />
-              </button>
-          </div>
-      )}
-
       <div>
         <div className="flex flex-col sm:flex-row items-start justify-between mb-6 gap-6">
             <div className="flex-grow">
